@@ -9,7 +9,15 @@
     "shortcuts",
     "typescript"
   ],
+  "homepage": "https://microkeys.dhrv.pw",
+  "bugs": {
+    "url": "https://github.com/0xdhrv/microkeys/issues"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xdhrv/microkeys.git"
+  },
   "files": [
     "dist",
     "LICENSE"
@@ -71,13 +79,5 @@
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "pnpm@12.14.0",
-  "homepage": "https://microkeys.dhrv.pw",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/0xdhrv/microkeys.git"
-  },
-  "bugs": {
-    "url": "https://github.com/0xdhrv/microkeys/issues"
-  }
+  "packageManager": "pnpm@12.14.0"
 }

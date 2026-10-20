@@ -1,4 +1,11 @@
-import { eventInfo, isKeyboardEvent, modifierBit, matchPress, parseKeybinding, type KeybindingPress } from "./core";
+import {
+  eventInfo,
+  isKeyboardEvent,
+  modifierBit,
+  matchPress,
+  parseKeybinding,
+  type KeybindingPress,
+} from "./core";
 import type {
   KeybindingConfig,
   KeybindingHandlerOptions,
