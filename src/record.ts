@@ -1,4 +1,4 @@
-import { IS_APPLE, eventInfo, modifierBit } from "./core";
+import { IS_APPLE, eventInfo, isKeyboardEvent, modifierBit } from "./core";
 import type { KeybindingTarget } from "./types";
 
 export interface KeybindingFromEventOptions {
@@ -69,13 +69,11 @@ export function recordKeybinding(
       reject(signal?.reason);
     };
     function onKeyDown(event: Event): void {
-      if (typeof (event as Partial<KeyboardEvent>).key !== "string") return;
-      const keyboardEvent = event as KeyboardEvent;
-      if (keyboardEvent.isComposing || modifierBit(keyboardEvent.key)) return;
-      keyboardEvent.preventDefault();
-      keyboardEvent.stopPropagation();
+      if (!isKeyboardEvent(event) || event.isComposing || modifierBit(event.key)) return;
+      event.preventDefault();
+      event.stopPropagation();
       cleanup();
-      resolve(keybindingFromEvent(keyboardEvent, options));
+      resolve(keybindingFromEvent(event, options));
     }
     target.addEventListener("keydown", onKeyDown, true);
     signal?.addEventListener("abort", onAbort, { once: true });

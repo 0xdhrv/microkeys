@@ -107,10 +107,6 @@ export interface KeybindingOptions extends KeybindingHandlerOptions {
   exclusive?: boolean;
 }
 
-// ---------------------------------------------------------------------------
-// Compile-time keybinding validation
-// ---------------------------------------------------------------------------
-
 type IsModifier<M extends string> = Lowercase<M> extends ModifierLower ? true : false;
 
 /** Validates a single press, e.g. `Shift+[Alt]+k` or `$mod+(F[1-9])`. */

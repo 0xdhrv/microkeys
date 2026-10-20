@@ -1,7 +1,3 @@
-// ---------------------------------------------------------------------------
-// Platform
-// ---------------------------------------------------------------------------
-
 /** Platform string, preferring the modern `userAgentData` API. */
 const PLATFORM: string =
   typeof navigator === "object"
@@ -15,10 +11,6 @@ const PLATFORM: string =
 export const IS_APPLE: boolean = /Mac|iPod|iPhone|iPad|macOS|iOS/i.test(PLATFORM);
 
 const IS_WINDOWS: boolean = /^Win/i.test(PLATFORM);
-
-// ---------------------------------------------------------------------------
-// Modifier bitmasks
-// ---------------------------------------------------------------------------
 
 export const SHIFT = 1;
 export const META = 2;
@@ -72,10 +64,6 @@ export function eventModifiers(event: KeyboardEvent): number {
   if (event.getModifierState?.("AltGraph")) mask |= ALT_GRAPH | ALT_GRAPH_ALIASES;
   return mask;
 }
-
-// ---------------------------------------------------------------------------
-// Parsing
-// ---------------------------------------------------------------------------
 
 /**
  * A single parsed press of a keybinding sequence.
@@ -142,10 +130,6 @@ export function parseKeybinding(input: string): KeybindingPress[] {
   });
 }
 
-// ---------------------------------------------------------------------------
-// Matching
-// ---------------------------------------------------------------------------
-
 /**
  * Pre-normalized event data, computed once per event and shared by every
  * binding so matching N bindings costs N integer/string compares.
@@ -158,6 +142,14 @@ export interface EventInfo {
   /** Latin letter/digit of the physical key when `key` isn't ASCII, else `""`. */
   readonly fallback: string;
   readonly mods: number;
+}
+
+/**
+ * Autocomplete selection can fire a plain `Event` named "keydown"; only
+ * handle real keyboard events.
+ */
+export function isKeyboardEvent(event: Event): event is KeyboardEvent {
+  return typeof (event as Partial<KeyboardEvent>).key === "string";
 }
 
 const LAYOUT_CODE = /^(?:Key([A-Z])|Digit(\d))$/;
@@ -203,7 +195,6 @@ export function matchPress(info: EventInfo, press: KeybindingPress): boolean {
     }
   }
 
-  // All required modifiers must be held.
   if ((info.mods & required) !== required) return false;
 
   // Windows reports AltGr as Control+Alt. A character typed with it (`@` on
@@ -224,9 +215,6 @@ export function matchPress(info: EventInfo, press: KeybindingPress): boolean {
   return (info.mods & STRICT_MASK & ~allowed) === 0;
 }
 
-/**
- * Tests if a keyboard event matches a single press.
- */
 export function matchKeybindingPress(event: KeyboardEvent, press: KeybindingPress): boolean {
   return matchPress(eventInfo(event), press);
 }

@@ -1,4 +1,4 @@
-import { eventInfo, modifierBit, matchPress, parseKeybinding, type KeybindingPress } from "./core";
+import { eventInfo, isKeyboardEvent, modifierBit, matchPress, parseKeybinding, type KeybindingPress } from "./core";
 import type {
   KeybindingConfig,
   KeybindingHandlerOptions,
@@ -66,14 +66,6 @@ export function defaultKeybindingsHandlerIgnore(event: KeyboardEvent): boolean {
 const layers: object[] = [];
 /** Events already seen by the top layer, so a layer that closes mid-dispatch doesn't leak them. */
 const claimed = new WeakSet<Event>();
-
-/**
- * Autocomplete selection can fire a plain `Event` named "keydown"; only
- * handle real keyboard events.
- */
-function isKeyboardEvent(event: Event): event is KeyboardEvent {
-  return typeof (event as Partial<KeyboardEvent>).key === "string";
-}
 
 interface Binding {
   readonly input: string;
