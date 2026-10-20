@@ -1,23 +1,13 @@
 import { IS_APPLE, microkeys, parseKeybinding } from "microkeys";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Binding,
-  Kbd,
-  keycaps,
-  KeySounds,
-  SoundToggle,
-  ThemeToggle,
-  useCopy,
-} from "../ui";
+import { Binding, Kbd, keycaps, KeySounds, SoundToggle, ThemeToggle, useCopy } from "../ui";
 import { CASES, type Case, type Press } from "./cases";
 import { runCase, toEventInit, type CaseResult } from "./runner";
 import { Sandbox } from "./Sandbox";
 
 /** Renders `backticked` spans as <code>. */
 function inlineCode(text: string) {
-  return text
-    .split(/`([^`]+)`/)
-    .map((part, i) => (i % 2 ? <code key={i}>{part}</code> : part));
+  return text.split(/`([^`]+)`/).map((part, i) => (i % 2 ? <code key={i}>{part}</code> : part));
 }
 
 const MOD_SYMBOLS = {
@@ -91,6 +81,7 @@ export function Tests() {
   const [filter, setFilter] = useState("");
   const [playAll, setPlayAll] = useState(0);
   const [live, setLive] = useState(false);
+  const [options, setOptions] = useState(false);
   const filterRef = useRef<HTMLInputElement>(null);
   const { apple, speed, roomy, failingOnly } = settings;
 
@@ -139,13 +130,7 @@ export function Tests() {
       (c) =>
         (!failingOnly || results[c.id]?.pass === false) &&
         (!q ||
-          [
-            c.title,
-            c.group,
-            c.description,
-            ...c.tags,
-            ...Object.keys(c.bindings),
-          ]
+          [c.title, c.group, c.description, ...c.tags, ...Object.keys(c.bindings)]
             .join(" ")
             .toLowerCase()
             .includes(q)),
@@ -190,45 +175,18 @@ export function Tests() {
           onChange={(e) => setFilter(e.target.value)}
           onKeyDown={(e) => e.key === "Escape" && e.currentTarget.blur()}
         />
-        <div className="seg" role="group" aria-label="Keycap style">
-          <button aria-pressed={apple} onClick={() => set({ apple: true })}>
-            Apple
-          </button>
-          <button aria-pressed={!apple} onClick={() => set({ apple: false })}>
-            PC
-          </button>
-        </div>
-        <div className="seg" role="group" aria-label="Playback speed">
-          {SPEEDS.map((s) => (
-            <button
-              key={s}
-              aria-pressed={speed === s}
-              onClick={() => set({ speed: s })}
-            >
-              {s}×
-            </button>
-          ))}
-        </div>
         <div className="seg" role="group" aria-label="Show">
           <button
             aria-pressed={!failingOnly}
-            onClick={() => set({ failingOnly: false })}
+            onClick={() => withTransition(() => set({ failingOnly: false }))}
           >
             All
           </button>
           <button
             aria-pressed={failingOnly}
-            onClick={() => set({ failingOnly: true })}
+            onClick={() => withTransition(() => set({ failingOnly: true }))}
           >
             Failing
-          </button>
-        </div>
-        <div className="seg" role="group" aria-label="Density">
-          <button aria-pressed={!roomy} onClick={() => set({ roomy: false })}>
-            Tight
-          </button>
-          <button aria-pressed={roomy} onClick={() => set({ roomy: true })}>
-            Roomy
           </button>
         </div>
         <div className="tape-actions">
@@ -238,9 +196,44 @@ export function Tests() {
           <button className="tape-btn" onClick={() => setRun((n) => n + 1)}>
             Rerun
           </button>
+          <button
+            className="tape-btn"
+            aria-expanded={options}
+            aria-controls="tape-options"
+            onClick={() => setOptions((o) => !o)}
+          >
+            View
+          </button>
           <SoundToggle />
           <ThemeToggle />
         </div>
+        {options && (
+          <div id="tape-options" className="tape-options">
+            <div className="seg" role="group" aria-label="Keycap style">
+              <button aria-pressed={apple} onClick={() => set({ apple: true })}>
+                Apple
+              </button>
+              <button aria-pressed={!apple} onClick={() => set({ apple: false })}>
+                PC
+              </button>
+            </div>
+            <div className="seg" role="group" aria-label="Playback speed">
+              {SPEEDS.map((s) => (
+                <button key={s} aria-pressed={speed === s} onClick={() => set({ speed: s })}>
+                  {s}×
+                </button>
+              ))}
+            </div>
+            <div className="seg" role="group" aria-label="Density">
+              <button aria-pressed={!roomy} onClick={() => set({ roomy: false })}>
+                Tight
+              </button>
+              <button aria-pressed={roomy} onClick={() => set({ roomy: true })}>
+                Roomy
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
       <main className="tape-main">
@@ -248,7 +241,7 @@ export function Tests() {
           <button
             className="live-toggle"
             aria-expanded={live}
-            onClick={() => setLive((l) => !l)}
+            onClick={() => withTransition(() => setLive((l) => !l))}
           >
             <span className="pg-chevron" aria-hidden>
               ›
@@ -301,9 +294,8 @@ export function Tests() {
         })}
 
         <p className="tape-foot">
-          <Kbd>/</Kbd> filter · <Kbd>P</Kbd> play all · <Kbd>R</Kbd> rerun ·
-          click a press to inspect its event · cases live in{" "}
-          <code className="path">site/src/tests/cases.ts</code>
+          <Kbd>/</Kbd> filter · <Kbd>P</Kbd> play all · <Kbd>R</Kbd> rerun · click a press to
+          inspect its event · cases live in <code className="path">site/src/tests/cases.ts</code>
         </p>
       </main>
     </div>
@@ -341,13 +333,10 @@ function Strip({
     stop();
     let t = 0;
     c.steps.forEach((s, i) => {
-      t +=
-        (Math.min(s.press.wait ?? 0, 1200) + (i ? BEAT : 0)) / speedRef.current;
+      t += (Math.min(s.press.wait ?? 0, 1200) + (i ? BEAT : 0)) / speedRef.current;
       timers.current.push(window.setTimeout(() => setHead(i), t));
     });
-    timers.current.push(
-      window.setTimeout(() => setHead(-1), t + 1100 / speedRef.current),
-    );
+    timers.current.push(window.setTimeout(() => setHead(-1), t + 1100 / speedRef.current));
   };
   useEffect(() => stop, []);
   useEffect(() => {
@@ -355,17 +344,13 @@ function Strip({
   }, [playAll]);
 
   const bindings = Object.entries(c.bindings);
-  const hasFlags = c.steps.some(
-    (s) => s.prevented !== undefined || s.stopped !== undefined,
-  );
+  const hasFlags = c.steps.some((s) => s.prevented !== undefined || s.stopped !== undefined);
 
   // Columns: a label, then a wait gap (if any) and a press for every step.
   const gridCols = [
     "minmax(120px, max-content)",
     ...c.steps.flatMap((s) => [
-      ...(s.press.wait
-        ? [`${20 + Math.round((Math.min(s.press.wait, 1500) / 1500) * 64)}px`]
-        : []),
+      ...(s.press.wait ? [`${20 + Math.round((Math.min(s.press.wait, 1500) / 1500) * 64)}px`] : []),
       "minmax(44px, max-content)",
     ]),
   ].join(" ");
@@ -393,9 +378,7 @@ function Strip({
   };
 
   const failed = (result?.steps ?? []).flatMap((s, i) =>
-    s.checks
-      .filter((k) => !k.pass)
-      .map((k) => ({ step: i + 1, label: k.label })),
+    s.checks.filter((k) => !k.pass).map((k) => ({ step: i + 1, label: k.label })),
   );
   const picked = sel !== null ? c.steps[sel] : undefined;
 
@@ -411,32 +394,23 @@ function Strip({
           </span>
         ))}
         <span className="strip-spacer" />
-        <button
-          className="tape-btn"
-          onClick={report}
-          aria-label={`Copy report for ${c.title}`}
-        >
+        <button className="tape-btn" onClick={report} aria-label={`Copy report for ${c.title}`}>
           {copied ? "Copied" : "Report"}
         </button>
         {c.steps.length > 0 && (
-          <button
-            className="tape-btn"
-            onClick={play}
-            aria-label={`Play ${c.title}`}
-          >
+          <button className="tape-btn" onClick={play} aria-label={`Play ${c.title}`}>
             ▶
           </button>
         )}
-        <span className="stamp" data-status={status}>
-          {status === "running" ? "…" : status === "pass" ? "✓ pass" : "✗ fail"}
+        <span className="stamp" data-status={status} aria-label={status}>
+          {status === "running" ? "…" : status === "pass" ? "✓" : "✗ fail"}
         </span>
       </header>
       <p className="strip-desc">{inlineCode(c.description)}</p>
 
       {c.throws || result?.error !== undefined ? (
         <div className="throws" data-pass={result?.errorPass}>
-          <span className="dim">throws</span>{" "}
-          <code>{result?.error ?? String(c.throws)}</code>
+          <span className="dim">throws</span> <code>{result?.error ?? String(c.throws)}</code>
           {result?.error !== undefined && c.throws && (
             <span className="dim">
               {" "}
@@ -445,11 +419,7 @@ function Strip({
           )}
         </div>
       ) : (
-        <div
-          className="roll"
-          style={{ gridTemplateColumns: gridCols }}
-          role="table"
-        >
+        <div className="roll" style={{ gridTemplateColumns: gridCols }} role="table">
           {/* ruler: the presses */}
           <div className="roll-label dim">press</div>
           {c.steps.flatMap((s, i) => [
@@ -494,9 +464,7 @@ function Strip({
               valid = false;
             }
             const opts = Object.entries(config)
-              .map(([k, v]) =>
-                typeof v === "function" ? k : `${k}: ${String(v)}`,
-              )
+              .map(([k, v]) => (typeof v === "function" ? k : `${k}: ${String(v)}`))
               .join(", ");
             return [
               <div key={`l${binding}`} className="roll-label">
@@ -508,9 +476,7 @@ function Strip({
                 {opts && <span className="roll-opts">{opts}</span>}
               </div>,
               ...c.steps.flatMap((s, i) => [
-                ...(s.press.wait
-                  ? [<div key={`${binding}g${i}`} className="roll-gap" />]
-                  : []),
+                ...(s.press.wait ? [<div key={`${binding}g${i}`} className="roll-gap" />] : []),
                 <div
                   key={`${binding}${i}`}
                   className="roll-cell"
@@ -530,25 +496,15 @@ function Strip({
             </div>,
             ...c.steps.flatMap((s, i) => {
               const r = result?.steps[i];
-              const flag = (
-                name: string,
-                want: boolean | undefined,
-                got: boolean | undefined,
-              ) =>
+              const flag = (name: string, want: boolean | undefined, got: boolean | undefined) =>
                 want === undefined ? null : (
                   <span key={name} data-ok={r ? want === got : undefined}>
                     {want ? name : `¬${name}`}
                   </span>
                 );
               return [
-                ...(s.press.wait
-                  ? [<div key={`fg${i}`} className="roll-gap" />]
-                  : []),
-                <div
-                  key={`f${i}`}
-                  className="roll-flags"
-                  data-ahead={head >= 0 && i > head}
-                >
+                ...(s.press.wait ? [<div key={`fg${i}`} className="roll-gap" />] : []),
+                <div key={`f${i}`} className="roll-flags" data-ahead={head >= 0 && i > head}>
                   {flag("pd", s.prevented, r?.prevented)}
                   {flag("stop", s.stopped, r?.stopped)}
                   {r?.conflicts.map((b) => (

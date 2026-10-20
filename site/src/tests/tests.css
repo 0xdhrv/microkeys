@@ -78,6 +78,14 @@
   color: var(--text-dim);
 }
 
+.tape-options {
+  display: flex;
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  padding-top: 2px;
+}
+
 .tape-actions {
   display: flex;
   align-items: center;
@@ -138,7 +146,7 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text-dim);
-  transition-property: color, background-color, transform;
+  transition-property: color, background-color, opacity, transform;
   transition-duration: 120ms;
   transition-timing-function: var(--ease-out);
 }
@@ -196,7 +204,7 @@
 }
 
 .reel {
-  margin-top: 28px;
+  margin-top: 36px;
 }
 
 .reel-title {
@@ -212,11 +220,7 @@
   color: var(--text-dim);
   background: var(--bg);
   /* perforation edge, like film stock */
-  background-image: radial-gradient(
-    circle,
-    var(--surface-3) 1.5px,
-    transparent 2px
-  );
+  background-image: radial-gradient(circle, var(--surface-3) 1.5px, transparent 2px);
   background-size: 10px 6px;
   background-repeat: repeat-x;
   background-position: 0 100%;
@@ -272,21 +276,19 @@
 
 .strip {
   position: relative;
-  margin-bottom: 10px;
-  padding: 12px 16px 14px 18px;
-  border-radius: 10px;
-  background: var(--surface);
-  box-shadow: 0 0 0 1px var(--border);
+  padding: 14px 0 16px;
+  border-top: 1px solid var(--border);
   scroll-margin-top: 96px;
   overflow: hidden;
 }
 
 .strip:target {
-  box-shadow: 0 0 0 1px var(--text-dim);
+  background: linear-gradient(90deg, var(--surface), transparent 70%);
 }
 
 .strip[data-status="fail"] {
-  box-shadow: 0 0 0 1px var(--fail);
+  padding-left: 14px;
+  box-shadow: inset 2px 0 0 var(--fail);
 }
 
 .strip-head {
@@ -310,10 +312,17 @@
 }
 
 .tag {
+  display: none;
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.04em;
   color: var(--text-dim);
+}
+
+.strip:hover .tag,
+.strip:focus-within .tag,
+.strip[data-status="fail"] .tag {
+  display: inline;
 }
 
 .tag::before {
@@ -323,6 +332,23 @@
 
 .strip-spacer {
   flex: 1;
+}
+
+/* row actions appear on demand; failures and touch keep them visible */
+.strip-head .tape-btn {
+  opacity: 0;
+}
+
+.strip:hover .tape-btn,
+.strip:focus-within .tape-btn,
+.strip[data-status="fail"] .tape-btn {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .strip-head .tape-btn {
+    opacity: 1;
+  }
 }
 
 .stamp {
@@ -341,13 +367,18 @@
 }
 
 .stamp[data-status="pass"] {
+  min-width: 0;
   color: var(--pass);
-  background: rgb(111 220 140 / 0.12);
+  background: none;
 }
 
 .stamp[data-status="fail"] {
   color: var(--fail);
   background: rgb(255 107 107 / 0.12);
+}
+
+.strip[data-status="pass"] .strip-desc {
+  color: var(--text-dim);
 }
 
 .strip-desc {
@@ -437,7 +468,7 @@
   min-height: var(--row);
   padding-right: 12px;
   font-size: 11px;
-  background: var(--surface);
+  background: var(--bg);
 }
 
 .roll-opts {
@@ -489,11 +520,7 @@
   font-size: 9.5px;
   font-variant-numeric: tabular-nums;
   color: var(--text-dim);
-  background: repeating-linear-gradient(
-    90deg,
-    var(--surface-3) 0 3px,
-    transparent 3px 6px
-  );
+  background: repeating-linear-gradient(90deg, var(--surface-3) 0 3px, transparent 3px 6px);
   background-size: 100% 1px;
   background-repeat: no-repeat;
   background-position: 0 55%;
@@ -501,7 +528,7 @@
 
 .roll-gap[data-wait] span {
   padding: 0 3px;
-  background: var(--surface);
+  background: var(--bg);
 }
 
 /* a note: the block a binding leaves on the tape when it fires */
@@ -546,11 +573,7 @@
 }
 
 .roll-cell[data-state="miss"] i {
-  background: repeating-linear-gradient(
-    135deg,
-    rgb(255 107 107 / 0.28) 0 3px,
-    transparent 3px 6px
-  );
+  background: repeating-linear-gradient(135deg, rgb(255 107 107 / 0.28) 0 3px, transparent 3px 6px);
   box-shadow: inset 0 0 0 1px var(--fail);
 }
 
