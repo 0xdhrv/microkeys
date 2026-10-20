@@ -1,6 +1,15 @@
 import { IS_APPLE, microkeys, parseKeybinding } from "microkeys";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Binding, Kbd, keycaps, KeySounds, SoundToggle, ThemeToggle, useCopy } from "../ui";
+import {
+  Binding,
+  Kbd,
+  keycaps,
+  KeySounds,
+  SoundToggle,
+  ThemeToggle,
+  useCopy,
+  withTransition,
+} from "../ui";
 import { CASES, type Case, type Press } from "./cases";
 import { runCase, toEventInit, type CaseResult } from "./runner";
 import { Sandbox } from "./Sandbox";
