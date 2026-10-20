@@ -8,7 +8,17 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
+import { flushSync } from "react-dom";
 import { installKeySounds, isSoundOn, setSoundOn, subscribeSound } from "./sound";
+
+/** Runs a state update inside a view transition where supported; applies it directly otherwise. */
+export function withTransition(update: () => void) {
+  if (!document.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    update();
+    return;
+  }
+  document.startViewTransition(() => flushSync(update));
+}
 
 /** Splits a keybinding into keycap labels, grouped by sequence press. */
 export function keycaps(binding: string, apple = IS_APPLE): string[][] {
@@ -143,7 +153,7 @@ export function Tabs<T extends string>({
           role="tab"
           className="tab"
           aria-selected={tab === value}
-          onClick={() => onChange(tab)}
+          onClick={() => withTransition(() => onChange(tab))}
         >
           {tab}
         </button>
@@ -172,7 +182,9 @@ export function EdgeBlur() {
 export function ThemeToggle() {
   const toggle = () => {
     const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
+    withTransition(() => {
+      document.documentElement.dataset.theme = next;
+    });
     try {
       localStorage.setItem("theme", next);
     } catch {}

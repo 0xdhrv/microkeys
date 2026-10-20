@@ -20,11 +20,11 @@
   --font-weight-semibold: 650;
 
   --font:
-    "Inter Variable", Inter, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+    "Inter Variable", Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
   --mono:
-    "Berkeley Mono", "SF Mono", SFMono-Regular, ui-monospace, Consolas,
-    "Liberation Mono", Menlo, monospace;
+    "Berkeley Mono", "SF Mono", SFMono-Regular, ui-monospace, Consolas, "Liberation Mono", Menlo,
+    monospace;
   --radius: 8px;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 
@@ -43,15 +43,13 @@
   --key-bg: linear-gradient(#fff, #f1efec);
   --key-bg-done: #ffe9d9;
   --key-shadow:
-    0 0 0 1px rgb(20 18 15 / 0.1), 0 1px 1px rgb(20 18 15 / 0.08),
-    0 2px 4px rgb(20 18 15 / 0.06), 0 4px 10px -2px rgb(20 18 15 / 0.08),
-    inset 0 1px 0 #fff, inset 0 -2px 0 rgb(20 18 15 / 0.07);
+    0 0 0 1px rgb(20 18 15 / 0.1), 0 1px 1px rgb(20 18 15 / 0.08), 0 2px 4px rgb(20 18 15 / 0.06),
+    0 4px 10px -2px rgb(20 18 15 / 0.08), inset 0 1px 0 #fff, inset 0 -2px 0 rgb(20 18 15 / 0.07);
   --key-shadow-pressed:
     0 0 0 1px rgb(20 18 15 / 0.12), 0 0 0 3px var(--accent-soft),
     0 1px 2px color-mix(in srgb, var(--accent) 45%, transparent),
     inset 0 1px 0 rgb(255 255 255 / 0.35);
-  --popover-shadow:
-    0 0 0 1px rgb(20 18 15 / 0.08), 0 12px 32px rgb(20 18 15 / 0.14);
+  --popover-shadow: 0 0 0 1px rgb(20 18 15 / 0.08), 0 12px 32px rgb(20 18 15 / 0.14);
   --blur-tint: #fafaf9;
   --hover: #f1f0ee;
   --scroll: #cfcbc5;
@@ -75,15 +73,14 @@
   --key-bg: linear-gradient(#2e2b28, #232120);
   --key-bg-done: #3a2414;
   --key-shadow:
-    0 0 0 1px rgb(0 0 0 / 0.6), 0 1px 1px rgb(0 0 0 / 0.5),
-    0 2px 4px rgb(0 0 0 / 0.4), 0 4px 10px -2px rgb(0 0 0 / 0.5),
-    inset 0 1px 0 rgb(255 255 255 / 0.1), inset 0 -2px 0 rgb(0 0 0 / 0.4);
+    0 0 0 1px rgb(0 0 0 / 0.6), 0 1px 1px rgb(0 0 0 / 0.5), 0 2px 4px rgb(0 0 0 / 0.4),
+    0 4px 10px -2px rgb(0 0 0 / 0.5), inset 0 1px 0 rgb(255 255 255 / 0.1),
+    inset 0 -2px 0 rgb(0 0 0 / 0.4);
   --key-shadow-pressed:
     0 0 0 1px rgb(0 0 0 / 0.6), 0 0 0 3px var(--accent-soft),
     0 2px 10px color-mix(in srgb, var(--accent) 45%, transparent),
     inset 0 1px 0 rgb(255 255 255 / 0.3);
-  --popover-shadow:
-    0 0 0 1px rgb(255 255 255 / 0.06), 0 12px 32px rgb(0 0 0 / 0.5);
+  --popover-shadow: 0 0 0 1px rgb(255 255 255 / 0.06), 0 12px 32px rgb(0 0 0 / 0.5);
   --blur-tint: #0a0908;
   --hover: #181614;
   --scroll: #2a2724;
@@ -281,6 +278,30 @@ kbd {
   color: var(--text-dim);
 }
 
+/* ---------------------------------------------------------------- view transitions */
+
+/* Cross-document: home, docs and tests crossfade on navigation. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-group(root) {
+  animation-duration: 180ms;
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -343,9 +364,7 @@ kbd {
 }
 
 .icon-volume[data-on="false"] .icon-volume-wave {
-  d: path(
-    "M16.8 8.8C17.6 9.6 18.4 10.4 19.2 11.2M16.8 11.2C17.6 10.4 18.4 9.6 19.2 8.8"
-  );
+  d: path("M16.8 8.8C17.6 9.6 18.4 10.4 19.2 11.2M16.8 11.2C17.6 10.4 18.4 9.6 19.2 8.8");
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -390,33 +409,15 @@ kbd {
 }
 .edge-blur > span:nth-child(2) {
   backdrop-filter: blur(1.5px);
-  mask-image: linear-gradient(
-    var(--dir),
-    transparent 12%,
-    #000 37%,
-    #000 50%,
-    transparent 75%
-  );
+  mask-image: linear-gradient(var(--dir), transparent 12%, #000 37%, #000 50%, transparent 75%);
 }
 .edge-blur > span:nth-child(3) {
   backdrop-filter: blur(3px);
-  mask-image: linear-gradient(
-    var(--dir),
-    transparent 25%,
-    #000 50%,
-    #000 62%,
-    transparent 87%
-  );
+  mask-image: linear-gradient(var(--dir), transparent 25%, #000 50%, #000 62%, transparent 87%);
 }
 .edge-blur > span:nth-child(4) {
   backdrop-filter: blur(6px);
-  mask-image: linear-gradient(
-    var(--dir),
-    transparent 37%,
-    #000 62%,
-    #000 75%,
-    transparent 100%
-  );
+  mask-image: linear-gradient(var(--dir), transparent 37%, #000 62%, #000 75%, transparent 100%);
 }
 .edge-blur > span:nth-child(5) {
   backdrop-filter: blur(10px);
