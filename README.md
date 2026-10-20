@@ -234,4 +234,4 @@ Test cases are defined in `site/src/tests/cases.ts`.
 
 ## License
 
-MIT.
+MIT. See [LICENSE](LICENSE).

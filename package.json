@@ -12,7 +12,7 @@
   "license": "MIT",
   "files": [
     "dist",
-    "LICENSE.tinykeys"
+    "LICENSE"
   ],
   "type": "module",
   "sideEffects": false,
