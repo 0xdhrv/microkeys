@@ -1,0 +1,136 @@
+.docs {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 620px);
+  gap: 56px;
+  justify-content: center;
+  padding: 72px 20px 96px;
+}
+
+.docs-nav {
+  position: sticky;
+  top: 72px;
+  align-self: start;
+  display: grid;
+  gap: 2px;
+  font-size: 12px;
+}
+
+.docs-nav .docs-brand {
+  margin-bottom: 14px;
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
+  color: var(--text-strong);
+}
+
+.docs-nav a {
+  padding: 3px 0;
+  color: var(--text-dim);
+  transition: color 120ms var(--ease-out);
+}
+
+.docs-nav a:hover {
+  color: var(--text-strong);
+}
+
+.docs-nav .docs-tools {
+  display: flex;
+  gap: 4px;
+  margin-top: 18px;
+}
+
+.docs-body > header {
+  margin-bottom: 40px;
+}
+
+.docs-body h1 {
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
+  color: var(--text-strong);
+}
+
+.docs-body > header p {
+  margin-top: 4px;
+}
+
+.doc {
+  scroll-margin-top: 72px;
+  display: grid;
+  gap: 14px;
+  margin-top: 48px;
+}
+
+.doc h2 {
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-strong);
+}
+
+.doc p code,
+.doc td code,
+.doc li code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--code);
+  background: var(--surface-2);
+}
+
+.doc ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.doc table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.doc th {
+  padding: 0 12px 8px 0;
+  text-align: left;
+  font-size: 12px;
+  font-weight: var(--font-weight-normal);
+  color: var(--text-dim);
+}
+
+.doc td {
+  padding: 8px 12px 8px 0;
+  border-top: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.doc td:first-child {
+  white-space: nowrap;
+}
+
+.doc td:last-child,
+.doc th:last-child {
+  padding-right: 0;
+}
+
+.doc .kbd-row {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 760px) {
+  .docs {
+    grid-template-columns: minmax(0, 620px);
+    gap: 32px;
+  }
+  .docs-nav {
+    position: static;
+    grid-auto-flow: column;
+    justify-content: start;
+    gap: 14px;
+    overflow-x: auto;
+  }
+  .docs-nav .docs-brand,
+  .docs-nav .docs-tools {
+    display: none;
+  }
+}

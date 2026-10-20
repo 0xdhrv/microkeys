@@ -1,0 +1,435 @@
+@import "@fontsource-variable/inter/opsz.css";
+
+@font-face {
+  font-family: "Berkeley Mono";
+  src: url("/fonts/BerkeleyMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --accent: #ff6900;
+  --accent-hover: #ff8033;
+  --on-accent: #fff;
+  --accent-text: #c24f00;
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
+
+  --font-weight-normal: 450;
+  --font-weight-medium: 550;
+  --font-weight-semibold: 650;
+
+  --font:
+    "Inter Variable", Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --mono:
+    "Berkeley Mono", "SF Mono", SFMono-Regular, ui-monospace, Consolas,
+    "Liberation Mono", Menlo, monospace;
+  --radius: 8px;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* light */
+  --bg: #fafaf9;
+  --surface: #fff;
+  --surface-2: #f4f3f1;
+  --surface-3: #ebe9e6;
+  --border: #e4e2de;
+  --text: #55524d;
+  --text-dim: #85817a;
+  --text-strong: #14120f;
+  --code: #2a2723;
+  --pass: #1f9d4a;
+  --fail: #d93636;
+  --key-bg: linear-gradient(#fff, #f1efec);
+  --key-bg-done: #ffe9d9;
+  --key-shadow:
+    0 0 0 1px rgb(20 18 15 / 0.1), 0 1px 1px rgb(20 18 15 / 0.08),
+    0 2px 4px rgb(20 18 15 / 0.06), 0 4px 10px -2px rgb(20 18 15 / 0.08),
+    inset 0 1px 0 #fff, inset 0 -2px 0 rgb(20 18 15 / 0.07);
+  --key-shadow-pressed:
+    0 0 0 1px rgb(20 18 15 / 0.12), 0 0 0 3px var(--accent-soft),
+    0 1px 2px color-mix(in srgb, var(--accent) 45%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.35);
+  --popover-shadow:
+    0 0 0 1px rgb(20 18 15 / 0.08), 0 12px 32px rgb(20 18 15 / 0.14);
+  --blur-tint: #fafaf9;
+  --hover: #f1f0ee;
+  --scroll: #cfcbc5;
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0a0908;
+  --surface: #141311;
+  --surface-2: #1c1a18;
+  --surface-3: #262320;
+  --border: #2a2724;
+  --text: #aaa59d;
+  --text-dim: #77726a;
+  --text-strong: #fff;
+  --code: #dcd8d2;
+  --accent-text: #ff8a3d;
+  --pass: #6fdc8c;
+  --fail: #ff6b6b;
+  --key-bg: linear-gradient(#2e2b28, #232120);
+  --key-bg-done: #3a2414;
+  --key-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.6), 0 1px 1px rgb(0 0 0 / 0.5),
+    0 2px 4px rgb(0 0 0 / 0.4), 0 4px 10px -2px rgb(0 0 0 / 0.5),
+    inset 0 1px 0 rgb(255 255 255 / 0.1), inset 0 -2px 0 rgb(0 0 0 / 0.4);
+  --key-shadow-pressed:
+    0 0 0 1px rgb(0 0 0 / 0.6), 0 0 0 3px var(--accent-soft),
+    0 2px 10px color-mix(in srgb, var(--accent) 45%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.3);
+  --popover-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.06), 0 12px 32px rgb(0 0 0 / 0.5);
+  --blur-tint: #0a0908;
+  --hover: #181614;
+  --scroll: #2a2724;
+
+  color-scheme: dark;
+}
+
+:root {
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: var(--font-weight-normal);
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
+  font-feature-settings: "calt", "cv05", "cv08", "ss03";
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--text-strong);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--text-dim);
+  outline-offset: 2px;
+}
+
+code,
+pre,
+kbd {
+  font-family: var(--mono);
+}
+
+/* ---------------------------------------------------------------- kbd */
+
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: var(--mono);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  color: var(--text-strong);
+  background: var(--key-bg);
+  box-shadow: var(--key-shadow);
+  /* Release is slower than press so rapid taps read as distinct strokes. */
+  transition:
+    color 160ms var(--ease-out),
+    background-color 200ms var(--ease-out),
+    transform 160ms var(--ease-out),
+    box-shadow 200ms var(--ease-out);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.kbd[data-size="lg"] {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 9px;
+  font-size: 16px;
+}
+
+.kbd[data-active="true"] {
+  transition-duration: 40ms;
+  color: var(--on-accent);
+  background: var(--accent);
+  transform: translateY(1px) scale(0.96);
+  box-shadow: var(--key-shadow-pressed);
+}
+
+.kbd[data-done="true"] {
+  transition-duration: 60ms, 80ms, 60ms, 80ms;
+  color: var(--accent-text);
+  background: var(--key-bg-done);
+}
+
+.kbd-row {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+/* ---------------------------------------------------------------- tabs */
+
+.tabs {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.tab {
+  color: var(--text-dim);
+  transition: color 120ms var(--ease-out);
+}
+
+.tab:hover {
+  color: var(--text-strong);
+}
+
+.tab[aria-selected="true"] {
+  color: var(--accent-text);
+}
+
+/* ---------------------------------------------------------------- code */
+
+.code {
+  position: relative;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--code);
+  font-family: var(--mono);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.code .copy {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-family: var(--font);
+  font-size: 11px;
+  color: var(--text-dim);
+  transition: color 120ms var(--ease-out);
+}
+
+.code .copy:hover,
+.code .copy:focus-visible {
+  color: var(--text-strong);
+}
+
+.tok-k {
+  color: var(--text-dim);
+}
+.tok-s {
+  color: var(--accent-text);
+}
+.tok-c {
+  color: var(--text-dim);
+}
+.tok-p {
+  color: var(--text-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------- theme toggle */
+
+.icon-toggle {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  color: var(--text-dim);
+  transition:
+    color 120ms var(--ease-out),
+    background-color 120ms var(--ease-out),
+    transform 120ms var(--ease-out);
+}
+
+.icon-toggle::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+}
+
+.icon-toggle:hover {
+  color: var(--text-strong);
+  background: var(--surface-2);
+}
+
+.icon-toggle:active {
+  transform: scale(0.96);
+}
+
+.icon-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+.icon-theme {
+  transition: transform 400ms var(--ease-out);
+}
+
+:root[data-theme="dark"] .icon-theme {
+  transform: rotate(180deg);
+}
+
+/* Wave morphs into a cross; both states share one command structure so `d` interpolates. */
+.icon-volume-wave {
+  d: path(
+    "M17.4142 8.5858C18.1952 9.3668 18.1952 10.6332 17.4142 11.4142M17.4142 11.4142C18.1952 10.6332 18.1952 9.3668 17.4142 8.5858"
+  );
+  transition: d 250ms var(--ease-out);
+}
+
+.icon-volume[data-on="false"] .icon-volume-wave {
+  d: path(
+    "M16.8 8.8C17.6 9.6 18.4 10.4 19.2 11.2M16.8 11.2C17.6 10.4 18.4 9.6 19.2 8.8"
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-theme,
+  .icon-volume-wave {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------- progressive blur */
+
+.edge-blur {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 72px;
+  z-index: 50;
+  pointer-events: none;
+  user-select: none;
+}
+
+.edge-blur[data-edge="top"] {
+  top: 0;
+  --dir: to top;
+  --tint: to bottom;
+}
+
+.edge-blur[data-edge="bottom"] {
+  bottom: 0;
+  --dir: to bottom;
+  --tint: to top;
+}
+
+.edge-blur > span {
+  position: absolute;
+  inset: 0;
+}
+
+.edge-blur > span:nth-child(1) {
+  backdrop-filter: blur(0.5px);
+  mask-image: linear-gradient(var(--dir), #000 0%, #000 25%, transparent 50%);
+}
+.edge-blur > span:nth-child(2) {
+  backdrop-filter: blur(1.5px);
+  mask-image: linear-gradient(
+    var(--dir),
+    transparent 12%,
+    #000 37%,
+    #000 50%,
+    transparent 75%
+  );
+}
+.edge-blur > span:nth-child(3) {
+  backdrop-filter: blur(3px);
+  mask-image: linear-gradient(
+    var(--dir),
+    transparent 25%,
+    #000 50%,
+    #000 62%,
+    transparent 87%
+  );
+}
+.edge-blur > span:nth-child(4) {
+  backdrop-filter: blur(6px);
+  mask-image: linear-gradient(
+    var(--dir),
+    transparent 37%,
+    #000 62%,
+    #000 75%,
+    transparent 100%
+  );
+}
+.edge-blur > span:nth-child(5) {
+  backdrop-filter: blur(10px);
+  mask-image: linear-gradient(var(--dir), transparent 50%, #000 75%);
+}
+
+.edge-blur::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    var(--tint),
+    color-mix(in srgb, var(--blur-tint) 70%, transparent),
+    transparent
+  );
+}

@@ -1,0 +1,343 @@
+.home {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 72px 20px 88px;
+}
+
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.home-header h1 {
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-strong);
+  letter-spacing: -0.01em;
+}
+
+.home-header p {
+  margin-top: 4px;
+}
+
+/* ---------------------------------------------------------------- grid */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.demo-wide {
+  grid-column: 1 / -1;
+}
+
+.demo-short {
+  height: 140px;
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.demo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 190px;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.demo-idle {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  cursor: pointer;
+}
+
+.demo-hint {
+  font-size: 12px;
+  color: var(--text-dim);
+  min-height: 18px;
+}
+
+.kbd-then {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin: 0 4px;
+}
+
+/* ---------------------------------------------------------------- palette */
+
+.palette {
+  width: 100%;
+  max-width: 230px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  box-shadow: var(--popover-shadow);
+  animation: pop 160ms var(--ease-out);
+  overflow: hidden;
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.palette-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-strong);
+  background: transparent;
+  outline: none;
+}
+
+.palette-input::placeholder {
+  color: var(--text-dim);
+}
+
+.palette-list {
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+}
+
+.palette-item {
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.palette-item[aria-selected="true"] {
+  color: var(--accent-text);
+  background: var(--accent-soft);
+}
+
+/* ---------------------------------------------------------------- sequence */
+
+.seq {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+}
+
+.seq-tabs {
+  --w: 72px;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, var(--w));
+  padding: 3px;
+  border-radius: 9px;
+  background: var(--surface-2);
+}
+
+.seq-indicator {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: var(--w);
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 1px 3px rgb(0 0 0 / 0.12);
+  transform: translateX(calc(var(--i) * var(--w)));
+  transition: transform 260ms var(--ease-out);
+}
+
+.seq-tab {
+  position: relative;
+  padding: 5px 0;
+  font-size: 12px;
+  color: var(--text-dim);
+  transition: color 160ms var(--ease-out);
+}
+
+.seq-tab[aria-pressed="true"] {
+  color: var(--accent-text);
+}
+
+/* ---------------------------------------------------------------- modifiers */
+
+.mods {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+}
+
+.mods-binding {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- konami */
+
+.konami {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+}
+
+.konami-keys {
+  display: grid;
+  grid-template-columns: repeat(10, 28px);
+  gap: 4px;
+}
+
+@media (max-width: 560px) {
+  .konami-keys {
+    grid-template-columns: repeat(5, 28px);
+  }
+}
+
+.konami-keys .kbd {
+  width: 28px;
+  min-width: 0;
+}
+
+.konami-win {
+  display: inline-block;
+  color: var(--accent-text);
+  animation: rise 500ms var(--ease-out);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* ---------------------------------------------------------------- sections */
+
+.section {
+  display: grid;
+  gap: 12px;
+  margin-top: 48px;
+}
+
+.section h2 {
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-strong);
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 64px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.footer nav {
+  display: flex;
+  gap: 16px;
+}
+
+.footer-strong {
+  color: var(--text);
+}
+
+.header-actions {
+  display: flex;
+  gap: 4px;
+}
+
+/* ══ Confetti (home/Confetti.tsx) ═══════════════════════════════
+   A filled pill on the card's ground, and a canvas over the whole
+   block that is blank except while a burst is in the air. */
+
+/* Bencho's tokens, mapped onto this site's own. The slab is the pill:
+   ink in light, the page's own ground in dark */
+.cft {
+  --ink: var(--text-strong);
+  --slab: var(--text-strong);
+  --on-slab: var(--bg);
+  --fill-on: var(--text-strong);
+  --font-ui: var(--font);
+}
+
+:root[data-theme="dark"] .cft {
+  --slab: var(--bg);
+  --on-slab: var(--text-strong);
+}
+
+.cft { position: relative; user-select: none; font-family: var(--font-ui); color: var(--fill-on, var(--ink)); }
+
+.cft-canvas { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+
+.cft-btn {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  /* --slab in dark is the page's own ground, which the card's stage
+     nearly is too, so the pill vanished there. A step of ink lifts it
+     in dark and changes nothing in light, where --slab is already ink */
+  background: color-mix(in srgb, var(--ink) 14%, var(--slab));
+  color: var(--on-slab);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: scale 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  letter-spacing: -0.01em;
+}
+
+.cft-btn:active { scale: 0.96; }
+
+/* the hop, on transform so it composes with the centring translate
+   and the press scale; --cft-side flips the tilt each press */
+.cft-btn[data-hop] { animation: cft-hop 560ms cubic-bezier(0.3, 0.7, 0.4, 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cft-btn[data-hop] { animation: none; }
+}
+
+@keyframes cft-hop {
+  0%   { transform: none; }
+  22%  { transform: translateY(-9px) rotate(calc(var(--cft-side, 1) * -7deg)); }
+  48%  { transform: translateY(-3px) rotate(calc(var(--cft-side, 1) * 4deg)); }
+  66%  { transform: translateY(0) rotate(calc(var(--cft-side, 1) * -1.5deg)) scale(1.04, 0.95); }
+  82%  { transform: rotate(calc(var(--cft-side, 1) * 0.6deg)); }
+  100% { transform: none; }
+}
+
+/* over the konami demo: centred, behind nothing, never catching a click */
+.cft[data-bare] {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  pointer-events: none;
+}

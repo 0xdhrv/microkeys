@@ -1,0 +1,8 @@
+# microkeys
+
+> A tiny (about 2 kB), fast, type-safe keybinding library for TypeScript, inspired by tinykeys.
+
+- [Docs](https://microkeys.dhrv.pw/docs/): syntax, options, formatting, lower-level API
+- [Docs as markdown](https://microkeys.dhrv.pw/docs.md)
+- [GitHub](https://github.com/0xdhrv/microkeys)
+- [npm](https://www.npmjs.com/package/microkeys)
