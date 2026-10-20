@@ -287,9 +287,19 @@
   --on-slab: var(--text-strong);
 }
 
-.cft { position: relative; user-select: none; font-family: var(--font-ui); color: var(--fill-on, var(--ink)); }
+.cft {
+  position: relative;
+  user-select: none;
+  font-family: var(--font-ui);
+  color: var(--fill-on, var(--ink));
+}
 
-.cft-canvas { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.cft-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
 
 .cft-btn {
   position: absolute;
@@ -314,23 +324,41 @@
   letter-spacing: -0.01em;
 }
 
-.cft-btn:active { scale: 0.96; }
+.cft-btn:active {
+  scale: 0.96;
+}
 
 /* the hop, on transform so it composes with the centring translate
    and the press scale; --cft-side flips the tilt each press */
-.cft-btn[data-hop] { animation: cft-hop 560ms cubic-bezier(0.3, 0.7, 0.4, 1); }
+.cft-btn[data-hop] {
+  animation: cft-hop 560ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .cft-btn[data-hop] { animation: none; }
+  .cft-btn[data-hop] {
+    animation: none;
+  }
 }
 
 @keyframes cft-hop {
-  0%   { transform: none; }
-  22%  { transform: translateY(-9px) rotate(calc(var(--cft-side, 1) * -7deg)); }
-  48%  { transform: translateY(-3px) rotate(calc(var(--cft-side, 1) * 4deg)); }
-  66%  { transform: translateY(0) rotate(calc(var(--cft-side, 1) * -1.5deg)) scale(1.04, 0.95); }
-  82%  { transform: rotate(calc(var(--cft-side, 1) * 0.6deg)); }
-  100% { transform: none; }
+  0% {
+    transform: none;
+  }
+  22% {
+    transform: translateY(-9px) rotate(calc(var(--cft-side, 1) * -7deg));
+  }
+  48% {
+    transform: translateY(-3px) rotate(calc(var(--cft-side, 1) * 4deg));
+  }
+  66% {
+    transform: translateY(0) rotate(calc(var(--cft-side, 1) * -1.5deg)) scale(1.04, 0.95);
+  }
+  82% {
+    transform: rotate(calc(var(--cft-side, 1) * 0.6deg));
+  }
+  100% {
+    transform: none;
+  }
 }
 
 /* over the konami demo: centred, behind nothing, never catching a click */
@@ -340,4 +368,59 @@
   top: 50%;
   translate: -50% -50%;
   pointer-events: none;
+}
+
+/* ---------------------------------------------------------------- load-in */
+
+/* Staggered entrance: each block gets --i, delay = i * 60ms. */
+.home-header > div,
+.grid > *,
+.home > .section,
+.footer {
+  animation: enter 400ms var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+.home-header > :nth-child(1) {
+  --i: 0;
+}
+.home-header > :nth-child(2) {
+  --i: 1;
+}
+.grid > :nth-child(1) {
+  --i: 2;
+}
+.grid > :nth-child(2) {
+  --i: 3;
+}
+.grid > :nth-child(3) {
+  --i: 4;
+}
+.grid > :nth-child(4) {
+  --i: 5;
+}
+.home > .section:nth-of-type(2) {
+  --i: 6;
+}
+.home > .section:nth-of-type(3) {
+  --i: 7;
+}
+.footer {
+  --i: 8;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-header > div,
+  .grid > *,
+  .home > .section,
+  .footer {
+    animation: none;
+  }
 }
