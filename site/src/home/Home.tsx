@@ -82,8 +82,7 @@ export function Home() {
           <a href="https://dhrv.pw" className="footer-strong">
             dhrv
           </a>{" "}
-          ·{" "}
-          <a href="https://x.com/0xdhrv">@0xdhrv</a>
+          · <a href="https://x.com/0xdhrv">@0xdhrv</a>
         </span>
         <nav>
           <span>v0.1.0</span>

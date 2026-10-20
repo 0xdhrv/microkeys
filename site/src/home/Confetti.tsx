@@ -52,13 +52,18 @@ const COLOUR = ["#ff6f45", "#ffb21a", "#22c49a", "#3d9ef5", "#8d6cf6", "#f2588f"
    ribbon. Stars, moons, zigzags and the rest were tried and made it
    a children's party */
 const KINDS = [
-  ["strip", 44], ["square", 26], ["dot", 18], ["curl", 12],
+  ["strip", 44],
+  ["square", 26],
+  ["dot", 18],
+  ["curl", 12],
 ] as const;
 type Kind = (typeof KINDS)[number][0];
 const TOTAL = KINDS.reduce((a, [, w]) => a + w, 0);
 const pickKind = (): Kind => {
   let r = Math.random() * TOTAL;
-  for (const [k, w] of KINDS) { if ((r -= w) < 0) return k; }
+  for (const [k, w] of KINDS) {
+    if ((r -= w) < 0) return k;
+  }
   return "strip";
 };
 
@@ -66,39 +71,76 @@ const pickKind = (): Kind => {
    shape — a strip's length and width, a square's size, a curl's
    swing — so no two in a burst come out the same */
 type Piece = {
-  x: number; y: number; vx: number; vy: number;
-  spin: number; vspin: number; turn: number; vturn: number;
-  s: number; v: number; kind: Kind; color: string; alpha: number; sway: number;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  spin: number;
+  vspin: number;
+  turn: number;
+  vturn: number;
+  s: number;
+  v: number;
+  kind: Kind;
+  color: string;
+  alpha: number;
+  sway: number;
 };
 
 /* one piece, centred on the origin, about s across */
 const draw = (g: CanvasRenderingContext2D, p: Piece) => {
-  const s = p.s, h = s / 2, v = p.v;
+  const s = p.s,
+    h = s / 2,
+    v = p.v;
   g.beginPath();
   switch (p.kind) {
     case "strip": {
-      const w = s * (0.35 + v * 0.3), l = s * (1.1 + v * 1.1);
-      g.fillRect(-w / 2, -l / 2, w, l); return;
+      const w = s * (0.35 + v * 0.3),
+        l = s * (1.1 + v * 1.1);
+      g.fillRect(-w / 2, -l / 2, w, l);
+      return;
     }
-    case "square": { const a = s * (0.75 + v * 0.35); g.fillRect(-a / 2, -a / 2, a, a); return; }
-    case "dot": g.arc(0, 0, h * (0.6 + v * 0.35), 0, Math.PI * 2); g.fill(); return;
+    case "square": {
+      const a = s * (0.75 + v * 0.35);
+      g.fillRect(-a / 2, -a / 2, a, a);
+      return;
+    }
+    case "dot":
+      g.arc(0, 0, h * (0.6 + v * 0.35), 0, Math.PI * 2);
+      g.fill();
+      return;
     case "curl": {
       /* a short ribbon with a turn in it, swung one way or the other */
       const k = (v < 0.5 ? -1 : 1) * (0.6 + Math.abs(v - 0.5) * 1.4);
-      g.lineWidth = s * 0.22; g.lineCap = "round";
-      g.moveTo(-s, 0); g.bezierCurveTo(-s * 0.4, -s * k, s * 0.4, s * k, s, 0); g.stroke(); return;
+      g.lineWidth = s * 0.22;
+      g.lineCap = "round";
+      g.moveTo(-s, 0);
+      g.bezierCurveTo(-s * 0.4, -s * k, s * 0.4, s * k, s, 0);
+      g.stroke();
+      return;
     }
   }
 };
 
 export function Confetti({
-  amount = 90, spread = 90, palette = "Colour",
-  trigger, button = true, width: W_ = W, height: H_ = H,
+  amount = 90,
+  spread = 90,
+  palette = "Colour",
+  trigger,
+  button = true,
+  width: W_ = W,
+  height: H_ = H,
 }: {
-  amount?: number; spread?: number; palette?: string;
-  trigger?: number; button?: boolean; width?: number; height?: number;
+  amount?: number;
+  spread?: number;
+  palette?: string;
+  trigger?: number;
+  button?: boolean;
+  width?: number;
+  height?: number;
 }) {
-  const W = W_, H = H_;
+  const W = W_,
+    H = H_;
   const canvas = useRef<HTMLCanvasElement>(null);
   const btn = useRef<HTMLButtonElement>(null);
   const pieces = useRef<Piece[]>([]);
@@ -112,7 +154,10 @@ export function Confetti({
     if (!c) return;
     const g = c.getContext("2d")!;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
-    if (c.width !== W * dpr) { c.width = W * dpr; c.height = H * dpr; }
+    if (c.width !== W * dpr) {
+      c.width = W * dpr;
+      c.height = H * dpr;
+    }
     let prev = performance.now();
     const tick = (now: number) => {
       const dt = Math.min(3, (now - prev) / 16.67);
@@ -144,20 +189,26 @@ export function Confetti({
       }
       pieces.current = live;
       if (live.length) raf.current = requestAnimationFrame(tick);
-      else { g.clearRect(0, 0, W, H); raf.current = 0; }
+      else {
+        g.clearRect(0, 0, W, H);
+        raf.current = 0;
+      }
     };
     if (!raf.current) raf.current = requestAnimationFrame(tick);
   };
 
   const burst = () => {
-    const b = btn.current, c = canvas.current;
+    const b = btn.current,
+      c = canvas.current;
     if (!c) return;
     /* from the top of the button, in the block's own pixels. The button
        is mid-block, so the throw is softer than a burst from the foot
        of it: the peak stays inside the frame */
-    let ox = W / 2, oy = H / 2;
+    let ox = W / 2,
+      oy = H / 2;
     if (b) {
-      const cr = c.getBoundingClientRect(), br = b.getBoundingClientRect();
+      const cr = c.getBoundingClientRect(),
+        br = b.getBoundingClientRect();
       const k = cr.width / W || 1;
       ox = (br.left + br.width / 2 - cr.left) / k;
       oy = (br.top - cr.top) / k + 4;
@@ -170,11 +221,17 @@ export function Confetti({
       const v = 5.5 + Math.random() * 5.5;
       const kind = pickKind();
       pieces.current.push({
-        x: ox + (Math.random() - 0.5) * 24, y: oy,
-        vx: Math.cos(a) * v, vy: Math.sin(a) * v,
-        spin: Math.random() * Math.PI, vspin: (Math.random() - 0.5) * 0.3,
-        turn: Math.random() * Math.PI, vturn: 0.08 + Math.random() * 0.14,
-        s: 9 + Math.random() * 5, v: Math.random(), kind,
+        x: ox + (Math.random() - 0.5) * 24,
+        y: oy,
+        vx: Math.cos(a) * v,
+        vy: Math.sin(a) * v,
+        spin: Math.random() * Math.PI,
+        vspin: (Math.random() - 0.5) * 0.3,
+        turn: Math.random() * Math.PI,
+        vturn: 0.08 + Math.random() * 0.14,
+        s: 9 + Math.random() * 5,
+        v: Math.random(),
+        kind,
         color: mono ? ink : COLOUR[Math.floor(Math.random() * COLOUR.length)],
         alpha: mono ? MONO[Math.floor(Math.random() * MONO.length)] : 1,
         sway: Math.random() * Math.PI * 2,
@@ -201,11 +258,25 @@ export function Confetti({
   });
 
   return (
-    <div className="cft" data-bare={button ? undefined : ""} style={{ width: W, height: H } as CSSProperties}>
-      <canvas ref={canvas} className="cft-canvas" style={{ width: W, height: H }} aria-hidden="true" />
+    <div
+      className="cft"
+      data-bare={button ? undefined : ""}
+      style={{ width: W, height: H } as CSSProperties}
+    >
+      <canvas
+        ref={canvas}
+        className="cft-canvas"
+        style={{ width: W, height: H }}
+        aria-hidden="true"
+      />
       {button && (
-        <button ref={btn} type="button" className="cft-btn" onClick={burst}
-          onAnimationEnd={(e) => e.currentTarget.removeAttribute("data-hop")}>
+        <button
+          ref={btn}
+          type="button"
+          className="cft-btn"
+          onClick={burst}
+          onAnimationEnd={(e) => e.currentTarget.removeAttribute("data-hop")}
+        >
           <PartyPopper size={18} strokeWidth={2} aria-hidden="true" />
           Celebrate
         </button>
