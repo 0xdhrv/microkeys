@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { CodeBlock, EdgeBlur, Kbd, SoundToggle, ThemeToggle } from "../ui";
 
 const MODIFIERS: [string, string][] = [
@@ -44,6 +44,38 @@ const SECTIONS = [
   { id: "lower-level", title: "Lower-level API" },
 ] as const;
 
+/** Id of the last section whose top has crossed the sticky offset. */
+function useActiveSection(ids: readonly string[]) {
+  const [active, setActive] = useState<string>(ids[0]!);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const atEnd = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+      let current = ids[0]!;
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= 96) current = id;
+      }
+      setActive(atEnd ? ids.at(-1)! : current);
+    };
+    const onScroll = () => {
+      frame ||= requestAnimationFrame(update);
+    };
+    update();
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      removeEventListener("scroll", onScroll);
+      removeEventListener("resize", onScroll);
+    };
+  }, [ids]);
+
+  return active;
+}
+
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
     <section className="doc" id={id}>
@@ -78,7 +110,10 @@ function OptionTable({ rows, head }: { rows: [string, string, string][]; head: s
   );
 }
 
+const SECTION_IDS = SECTIONS.map((s) => s.id);
+
 export function Docs() {
+  const active = useActiveSection(SECTION_IDS);
   return (
     <div className="docs">
       <EdgeBlur />
@@ -87,7 +122,7 @@ export function Docs() {
           microkeys
         </a>
         {SECTIONS.map((s) => (
-          <a key={s.id} href={`#${s.id}`}>
+          <a key={s.id} href={`#${s.id}`} aria-current={active === s.id ? "location" : undefined}>
             {s.title}
           </a>
         ))}

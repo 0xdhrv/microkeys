@@ -29,7 +29,8 @@
   transition: color 120ms var(--ease-out);
 }
 
-.docs-nav a:hover {
+.docs-nav a:hover,
+.docs-nav a[aria-current="location"] {
   color: var(--text-strong);
 }
 
