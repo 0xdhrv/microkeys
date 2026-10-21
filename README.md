@@ -134,8 +134,7 @@ import { defaultKeybindingsHandlerIgnore } from "microkeys";
 
 microkeys(window, bindings, {
   ignore: (e) =>
-    defaultKeybindingsHandlerIgnore(e) ||
-    (e.target as Element).closest("dialog") != null,
+    defaultKeybindingsHandlerIgnore(e) || (e.target as Element).closest("dialog") != null,
 });
 ```
 
@@ -148,11 +147,7 @@ wins, and the previous one resumes when it unsubscribes.
 
 ```ts
 function openDialog() {
-  const close = microkeys(
-    window,
-    { Escape: () => close() },
-    { exclusive: true },
-  );
+  const close = microkeys(window, { Escape: () => close() }, { exclusive: true });
 }
 ```
 

@@ -1,1 +1,17 @@
-{"version":1,"sessions":{"166d9312-9080-4595-bb50-dbeb3b559ca8":{"updatedAt":1792539368808,"files":{"/Users/dhrv/Projects/PER/microkeys/site/src/tests/tests.css":{"editCount":1,"findings":["side-tab:288"],"stopBaseline":{"version":1,"engine":"0.1.15","counts":{}},"cleanAcked":true}},"footerShown":true}}}
+{
+  "version": 1,
+  "sessions": {
+    "166d9312-9080-4595-bb50-dbeb3b559ca8": {
+      "updatedAt": 1792539368808,
+      "files": {
+        "/Users/dhrv/Projects/PER/microkeys/site/src/tests/tests.css": {
+          "editCount": 1,
+          "findings": ["side-tab:288"],
+          "stopBaseline": { "version": 1, "engine": "0.1.15", "counts": {} },
+          "cleanAcked": true
+        }
+      },
+      "footerShown": true
+    }
+  }
+}
