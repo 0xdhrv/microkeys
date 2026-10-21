@@ -1,8 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="#0a0908"/>
-  <text x="84" y="110" font-family="Menlo, monospace" font-size="32" fill="#78716c">microkeys.dhrv.pw</text>
-  <text x="80" y="300" font-family="Menlo, monospace" font-size="120" font-weight="700" fill="#fafaf9">microkeys</text>
-  <text x="84" y="380" font-family="Helvetica, Arial, sans-serif" font-size="44" fill="#a8a29e">Keyboard shortcuts TypeScript can check.</text>
-  <text x="84" y="440" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="#78716c">About 2 kB · inspired by tinykeys</text>
-  <g font-family="Menlo, monospace" font-size="44" fill="#fafaf9" text-anchor="middle"><rect x="84" y="500" width="88" height="88" rx="16" fill="#2e2b28" stroke="#3d3935"/><text x="128" y="559">⌘</text><rect x="192" y="500" width="88" height="88" rx="16" fill="#2e2b28" stroke="#3d3935"/><text x="236" y="559">K</text></g>
+  <g transform="translate(900 345)">
+    <ellipse cx="0" cy="-6" rx="132" ry="21.0" fill="#fafaf9" opacity=".07"/>
+    <g transform="translate(0 -14) scale(6)">
+      <rect x="-24" y="-38" width="48" height="34" rx="11" fill="#c24f00"/>
+      <rect x="-24" y="-44" width="48" height="34" rx="11" fill="#ff6900"/>
+      <circle cx="-8" cy="-29" r="3.4" fill="#14120f"/><circle cx="8" cy="-29" r="3.4" fill="#14120f"/>
+      <path d="M-6 -22q6 10 12 0z" fill="#14120f"/>
+    </g>
+  </g>
+  <text x="80" y="480" font-family="Berkeley Mono" font-size="120" fill="#fafaf9">microkeys</text>
+  <text x="84" y="548" font-family="Inter" font-size="40" fill="#a8a29e">Keyboard shortcuts TypeScript can check.</text>
 </svg>
