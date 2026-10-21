@@ -1,7 +1,7 @@
 # microkeys
 
 <div align="center">
-  <img src="./assets/microkeys-mark.svg" alt="microkeys keycap mascot hopping" width="96" height="96" />
+  <img src="./assets/microkeys-mark.svg" alt="microkeys keycap mascot hopping" width="96" height="136" />
 </div>
 
 A tiny, fast, type-safe keybinding library, inspired by
