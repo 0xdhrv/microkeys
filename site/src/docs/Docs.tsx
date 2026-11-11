@@ -41,6 +41,7 @@ const SECTIONS = [
   { id: "syntax", title: "Syntax" },
   { id: "binding-options", title: "Binding options" },
   { id: "global-options", title: "Global options" },
+  { id: "exclusive", title: "Exclusive scopes" },
   { id: "formatting", title: "Formatting" },
   { id: "lower-level", title: "Lower-level API" },
 ] as const;
@@ -264,6 +265,20 @@ microkeys(window, bindings, {
   ignore: (e) =>
     defaultKeybindingsHandlerIgnore(e) || (e.target as Element).closest("dialog") != null,
 })`}
+          />
+        </Section>
+
+        <Section id="exclusive" title="Exclusive scopes">
+          <p>
+            A dialog can take over the keyboard. While an <code>exclusive</code> subscription is
+            active, every other subscription pauses, so <code>Escape</code> closes the dialog
+            without also reaching the page. Exclusive subscriptions stack: the newest wins, and the
+            previous one resumes when it unsubscribes.
+          </p>
+          <CodeBlock
+            code={`function openDialog() {
+  const close = microkeys(window, { Escape: () => close() }, { exclusive: true })
+}`}
           />
         </Section>
 

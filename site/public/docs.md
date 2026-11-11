@@ -115,6 +115,16 @@ microkeys(window, bindings, {
 });
 ```
 
+## Exclusive scopes
+
+A dialog can take over the keyboard. While an `exclusive` subscription is active, every other subscription pauses, so `Escape` closes the dialog without also reaching the page. Exclusive subscriptions stack: the newest wins, and the previous one resumes when it unsubscribes.
+
+```ts
+function openDialog() {
+  const close = microkeys(window, { Escape: () => close() }, { exclusive: true });
+}
+```
+
 ## Formatting
 
 `formatKeybinding` turns a binding into display text, with Apple symbols on macOS and iOS.
