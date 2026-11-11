@@ -125,7 +125,7 @@ target.
 | Anywhere, during IME composition                 | Everything                                                                                                                                                             |
 | Text inputs, textareas, selects, contenteditable | Typing. `$mod`/`Control` combos, `Escape`, and F-keys still fire, except text editing combos (`$mod+a`, `c`, `v`, `x`, `y`, `z`, arrows, Backspace, Delete, Home, End) |
 | Buttons, links, checkboxes, `role="button"`…     | Plain `Enter` and `Space`                                                                                                                                              |
-| Inside menus, listboxes, grids, tablists…        | Plain arrow keys                                                                                                                                                       |
+| Inside menus, listboxes, grids, tablists…        | Plain arrow keys, unless the listener is on that widget                                                                                                                |
 
 To extend it:
 
@@ -199,6 +199,7 @@ import { formatKeybinding } from "microkeys";
 formatKeybinding("$mod+Shift+k"); // "⇧⌘K" on macOS, "Ctrl+Shift+K" elsewhere
 formatKeybinding("g i"); // "G I"
 formatKeybinding("Control+Enter", { apple: true }); // "⌃↩"
+formatKeybinding("$mod+k", { apple: false }); // "Ctrl+K", even on macOS
 formatKeybinding("g i", { sequenceSeparator: " then " }); // "G then I"
 ```
 
@@ -219,19 +220,20 @@ Also exported: `parseKeybinding`, `matchKeybindingPress`, `eventModifiers`,
 ## Development
 
 ```sh
-npm test          # runtime tests (happy-dom) + type tests
-npm run typecheck
-npm run build     # tsdown → dist/ (ESM + CJS + .d.ts)
-npm run bench     # dispatch benchmark
+pnpm install      # the library and the site/ workspace
+pnpm test         # runtime tests (happy-dom) + type tests
+pnpm typecheck
+pnpm build        # tsdown → dist/ (ESM + CJS + .d.ts)
+pnpm bench        # dispatch benchmark
+pnpm check        # format, lint, tests, and build, as CI runs them
 ```
 
 The demo site lives in `site/` (Vite+ and React). It imports the library from
 `src/` directly, so changes show up live:
 
 ```sh
-npm --prefix site install
-npm run site:dev    # / demo, /tests/ in-browser test cases, /docs/ reference
-npm run site:build  # static output in site/dist
+pnpm site:dev    # / demo, /tests/ in-browser test cases, /docs/ reference
+pnpm site:build  # static output in site/dist
 ```
 
 Test cases are defined in `site/src/tests/cases.ts`.

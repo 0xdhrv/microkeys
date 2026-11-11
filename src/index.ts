@@ -47,7 +47,8 @@ const TEXT_EDIT_COMBO = /^(?:[acvxyz]|Arrow\w+|Backspace|Delete|Home|End)$/i;
  * - In text fields: typing. `$mod`/`Control` combos (except text editing
  *   ones like `$mod+a`, `$mod+z`), `Escape`, and F-keys still fire.
  * - On buttons, links, and similar: plain `Enter` and `Space`.
- * - Inside menus, listboxes, grids, tabs, and similar: plain arrow keys.
+ * - Inside menus, listboxes, grids, tabs, and similar: plain arrow keys,
+ *   unless the listener is on or inside that widget.
  */
 export function defaultKeybindingsHandlerIgnore(event: KeyboardEvent): boolean {
   if (event.isComposing) return true;
@@ -62,7 +63,11 @@ export function defaultKeybindingsHandlerIgnore(event: KeyboardEvent): boolean {
   }
   if (shortcut || event.altKey) return false;
   if (key === "Enter" || key === " ") return target.matches(PRESSABLE);
-  if (key.startsWith("Arrow")) return target.closest?.(ARROW_WIDGET) != null;
+  if (key.startsWith("Arrow")) {
+    const widget = target.closest?.(ARROW_WIDGET);
+    const current = event.currentTarget as Node | null;
+    return widget != null && !(current?.nodeType && widget.contains(current));
+  }
   return false;
 }
 

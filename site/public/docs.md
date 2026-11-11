@@ -56,6 +56,10 @@ A modifier that isn't in the binding blocks the match: `a` doesn't fire on Shift
 
 Literal bindings are type-checked. `"Hyper+k"` and `"Shift+"` fail to compile; computed strings that slip through throw a `SyntaxError` when the handler is created.
 
+Letters match the character typed, so `$mod+z` follows the Z key on AZERTY and Dvorak. When the typed character isn't ASCII (Russian `я`, or `å` from Option+A on macOS), the letter or digit of the physical key is used instead, so `Control+s` and `Alt+a` still work. Write `KeyZ` to bind the physical key.
+
+On Windows, AltGr reports as Control+Alt. A character typed with AltGr (`@` on a German keyboard) doesn't fire a `Control+Alt+KeyQ` binding. Bind it with `AltGraph+KeyQ` or `Control+Alt+@`.
+
 ## Binding options
 
 A binding's value is a handler or a config object.
@@ -91,8 +95,18 @@ microkeys(window, {
 | stopPropagation | false        | Default for every binding                                            |
 | ignore          | default      | Return true to skip an event                                         |
 | onConflict      | console.warn | Called when a binding yields to a longer sequence; false silences it |
+| exclusive       | false        | Take over the keyboard while subscribed                              |
 
-By default `ignore` skips IME composition and events from inputs, textareas, selects, and contenteditable elements, unless that element is the listener's own target. To extend it:
+A key fires at most one binding per subscription. When a key both completes a binding and starts a longer sequence, the one listed first wins: an earlier sequence holds the key back and calls `onConflict`, an earlier binding fires and the sequence never starts. To have both, subscribe them separately.
+
+The default `ignore` leaves keys to the browser or the focused control when they belong there:
+
+- During IME composition: every key.
+- In inputs, textareas, selects, and contenteditable: typing. `$mod` and `Control` combos, `Escape`, and F-keys still fire, except text editing ones like `$mod+a`, `$mod+c`, and `$mod+z`.
+- On buttons, links, and checkboxes: plain `Enter` and `Space`.
+- Inside menus, listboxes, grids, and tablists: plain arrow keys, unless the listener is on that widget.
+
+It never ignores events whose target is the listener's own target. To extend it:
 
 ```ts
 import { defaultKeybindingsHandlerIgnore } from "microkeys";
@@ -102,6 +116,52 @@ microkeys(window, bindings, {
     defaultKeybindingsHandlerIgnore(e) || (e.target as Element).closest("dialog") != null,
 });
 ```
+
+## Exclusive scopes
+
+A dialog can take over the keyboard. While an `exclusive` subscription is active, every other subscription pauses, so `Escape` closes the dialog without also reaching the page. Exclusive subscriptions stack: the newest wins, and the previous one resumes when it unsubscribes.
+
+```ts
+function openDialog() {
+  const close = microkeys(window, { Escape: () => close() }, { exclusive: true });
+}
+```
+
+## Recording shortcuts
+
+```ts
+import { recordKeybinding, keybindingFromEvent } from "microkeys";
+
+const binding = await recordKeybinding(); // user presses ⌘⇧K → "$mod+Shift+k"
+microkeys(window, { [binding]: run });
+
+recordKeybinding(window, { signal: controller.signal, mod: false }); // "Meta+Shift+k"
+keybindingFromEvent(event); // same conversion for your own listener
+```
+
+`recordKeybinding` waits for a non-modifier key, then `preventDefault`s it. The result matches the press that produced it.
+
+## React
+
+```tsx
+import { useKeybinding, useKeybindings } from "microkeys/react";
+
+function Editor() {
+  const ref = useRef<HTMLDivElement>(null);
+  useKeybindings({
+    "$mod+s": { handler: save, preventDefault: true },
+    "g i": goToInbox,
+  });
+  useKeybinding("Escape", close, {
+    target: ref,
+    exclusive: true,
+    enabled: isOpen,
+  });
+  return <div ref={ref} />;
+}
+```
+
+Hooks take every global option, plus `target` (an element or ref, default `window`) and `enabled`. Handlers, `when`, `ignore`, and `onConflict` always use the latest render, so inline functions don't resubscribe. Other per-binding options apply when the listener is created.
 
 ## Formatting
 
@@ -113,6 +173,7 @@ import { formatKeybinding } from "microkeys";
 formatKeybinding("$mod+Shift+k"); // "⇧⌘K" on macOS, "Ctrl+Shift+K" elsewhere
 formatKeybinding("g i"); // "G I"
 formatKeybinding("Control+Enter", { apple: true }); // "⌃↩"
+formatKeybinding("$mod+k", { apple: false }); // "Ctrl+K", even on macOS
 formatKeybinding("g i", { sequenceSeparator: " then " }); // "G then I"
 ```
 

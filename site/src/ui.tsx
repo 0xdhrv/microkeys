@@ -1,4 +1,4 @@
-import { formatKeybinding, IS_APPLE } from "microkeys";
+import { formatKeybinding, IS_APPLE, microkeys } from "microkeys";
 import { TextMorph } from "torph/react";
 import {
   useCallback,
@@ -17,7 +17,8 @@ export function withTransition(update: () => void) {
     update();
     return;
   }
-  document.startViewTransition(() => flushSync(update));
+  // A newer transition skips this one, which rejects `ready`; the update still applies.
+  document.startViewTransition(() => flushSync(update)).ready.catch(() => {});
 }
 
 /** Splits a keybinding into keycap labels, grouped by sequence press. */
@@ -49,6 +50,21 @@ export function Kbd({
   );
 }
 
+/**
+ * Shows `apple` on Apple devices and `other` elsewhere. The prerender can't
+ * know the visitor's platform, so it emits both and the head script's
+ * `data-apple` picks one before first paint.
+ */
+export function ForPlatform({ apple, other }: { apple: ReactNode; other: ReactNode }) {
+  if (typeof document !== "undefined") return IS_APPLE ? apple : other;
+  return (
+    <>
+      <span data-platform="apple">{apple}</span>
+      <span data-platform="other">{other}</span>
+    </>
+  );
+}
+
 /** Renders a keybinding as keycaps, e.g. `$mod+k` → [⌘][K]. */
 export function Binding({
   binding,
@@ -59,6 +75,14 @@ export function Binding({
   apple?: boolean;
   size?: "lg";
 }) {
+  if (apple === undefined) {
+    return (
+      <ForPlatform
+        apple={<Binding binding={binding} apple size={size} />}
+        other={<Binding binding={binding} apple={false} size={size} />}
+      />
+    );
+  }
   return (
     <span className="kbd-row">
       {keycaps(binding, apple).map((press, i) => (
@@ -124,13 +148,15 @@ export function CodeBlock({
 }) {
   const { copied, copy } = useCopy();
   return (
-    <pre className="code">
-      {prompt && <span className="tok-p">$ </span>}
-      <code>{plain ? code : highlight(code)}</code>
+    <div className="code-block">
+      <pre className="code">
+        {prompt && <span className="tok-p">$ </span>}
+        <code>{plain ? code : highlight(code)}</code>
+      </pre>
       <button className="copy" onClick={() => copy(code)}>
         <TextMorph>{copied ? "Copied" : "Copy"}</TextMorph>
       </button>
-    </pre>
+    </div>
   );
 }
 
@@ -145,14 +171,42 @@ export function Tabs<T extends string>({
   onChange: (tab: T) => void;
   label: string;
 }) {
+  const list = useRef<HTMLDivElement>(null);
+  const latest = useRef({ tabs, onChange });
+  latest.current = { tabs, onChange };
+
+  // Arrow keys, Home and End move between tabs, as in the WAI-ARIA tabs pattern.
+  useEffect(() => {
+    const el = list.current;
+    if (!el) return;
+    const select = (to: (index: number, count: number) => number) => () => {
+      const { tabs, onChange } = latest.current;
+      const buttons = [...el.querySelectorAll<HTMLElement>("[role=tab]")];
+      const index = to(buttons.indexOf(document.activeElement as HTMLElement), tabs.length);
+      withTransition(() => onChange(tabs[index]!));
+      buttons[index]?.focus();
+    };
+    return microkeys(
+      el,
+      {
+        ArrowRight: select((i, n) => (i + 1) % n),
+        ArrowLeft: select((i, n) => (i - 1 + n) % n),
+        Home: select(() => 0),
+        End: select((_, n) => n - 1),
+      },
+      { preventDefault: true },
+    );
+  }, []);
+
   return (
-    <div className="tabs" role="tablist" aria-label={label}>
+    <div className="tabs" role="tablist" aria-label={label} ref={list}>
       {tabs.map((tab) => (
         <button
           key={tab}
           role="tab"
           className="tab"
           aria-selected={tab === value}
+          tabIndex={tab === value ? 0 : -1}
           onClick={() => withTransition(() => onChange(tab))}
         >
           {tab}

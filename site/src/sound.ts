@@ -127,8 +127,11 @@ export function installKeySounds(): () => void {
     play(e.code, true);
   };
   const onUp = (e: KeyboardEvent) => {
-    if (!down.delete(e.code) || !isSoundOn()) return;
-    play(e.code, false);
+    // macOS sends no keyup for keys released while ⌘ is held, so they would
+    // stay "down" and stay silent on their next press.
+    if (e.key === "Meta") down.clear();
+    else if (!down.delete(e.code)) return;
+    if (isSoundOn()) play(e.code, false);
   };
   const onBlur = () => down.clear();
   window.addEventListener("keydown", onDown, true);

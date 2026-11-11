@@ -42,6 +42,11 @@
         var t = localStorage.getItem("theme");
         if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         document.documentElement.dataset.theme = t;
+        var n = navigator;
+        var platform = (n.userAgentData && n.userAgentData.platform) || n.platform || "";
+        if (/Mac|iPod|iPhone|iPad|macOS|iOS/i.test(platform)) {
+          document.documentElement.dataset.apple = "";
+        }
       } catch (e) {}
     </script>
   </head>

@@ -65,7 +65,7 @@ function p(key: string, mods = "", extra: Partial<Press> = {}): Press {
 
 /** One step per character, nothing expected except on the last. */
 function typed(keys: string, last: string[] = []): Step[] {
-  return [...keys].map((key, i) => ({
+  return keys.split("").map((key, i) => ({
     press: p(key),
     expect: i === keys.length - 1 ? last : [],
   }));

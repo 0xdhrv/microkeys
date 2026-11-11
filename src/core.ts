@@ -82,6 +82,8 @@ export interface KeybindingPress {
 }
 
 const PRESS_SPLIT = /(?<=\w|\])\+/;
+/** A press ending in a regex key, whose own `+` must not split it: `Shift+(F\d+)`. */
+const REGEX_PRESS = /^((?:[^(+]+\+)*)(\(.+\))$/;
 const REGEX_KEY = /^\((.+)\)$/;
 const OPTIONAL_MOD = /^\[(.*)\]$/;
 
@@ -101,8 +103,11 @@ const OPTIONAL_MOD = /^\[(.*)\]$/;
 export function parseKeybinding(input: string): KeybindingPress[] {
   const presses = input.trim().split(/\s+/);
   return presses.map((press) => {
-    const parts = press.split(PRESS_SPLIT);
-    const last = parts.pop();
+    const regexPress = press.endsWith(")") ? REGEX_PRESS.exec(press) : null;
+    const parts = regexPress
+      ? (regexPress[1] ?? "").split("+").slice(0, -1)
+      : press.split(PRESS_SPLIT);
+    const last = regexPress ? regexPress[2] : parts.pop();
     if (!last) throw new SyntaxError(`microkeys: empty key in "${input}"`);
 
     let required = 0;

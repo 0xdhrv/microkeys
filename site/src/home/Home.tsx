@@ -20,11 +20,13 @@ const unsubscribe = microkeys(window, {
   "Shift+(F[1-9])": (event) => openTab(event.key),
   "Hyper+q": quit, // Type error: "Hyper" isn't a modifier
 })`,
-  React: `import { microkeys } from "microkeys"
-import { useEffect } from "react"
+  React: `import { useKeybindings } from "microkeys/react"
 
-export function useHotkeys(...args: Parameters<typeof microkeys>) {
-  useEffect(() => microkeys(...args), args)
+function Editor() {
+  useKeybindings({
+    "$mod+s": { handler: save, preventDefault: true },
+    Escape: close, // inline handlers don't resubscribe
+  })
 }`,
   Options: `microkeys(window, {
   "$mod+s": { handler: save, preventDefault: true },

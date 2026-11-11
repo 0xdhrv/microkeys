@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useReducer, useRef, type RefObject } from "react";
 import { microkeys } from "./index";
 import type {
   IsValidKeybinding,
@@ -18,6 +18,10 @@ export interface UseKeybindingsOptions extends Omit<KeybindingOptions, "signal">
 }
 
 const SEPARATOR = "\0";
+
+function resolveTarget(target: UseKeybindingsOptions["target"]): KeybindingTarget | null {
+  return target === undefined ? window : "current" in target ? target.current : target;
+}
 
 function toConfig(value: KeybindingValue | undefined): Partial<KeybindingConfig> {
   return typeof value === "function" ? { handler: value } : (value ?? {});
@@ -67,9 +71,14 @@ export function useKeybindings<const K extends string>(
   const hasIgnore = options.ignore !== undefined;
   const conflicts = options.onConflict === false ? false : options.onConflict !== undefined;
 
+  // A ref's element can mount, unmount, or change without any dependency
+  // changing; `retarget` resubscribes when it does.
+  const subscribed = useRef<KeybindingTarget | null>(null);
+  const [version, retarget] = useReducer((n: number) => n + 1, 0);
+
   useEffect(() => {
-    if (!enabled) return;
-    const element = target === undefined ? window : "current" in target ? target.current : target;
+    const element = enabled ? resolveTarget(target) : null;
+    subscribed.current = element;
     if (!element) return;
 
     const current = (binding: string) => toConfig(latest.current.keybindings[binding]);
@@ -103,7 +112,12 @@ export function useKeybindings<const K extends string>(
     exclusive,
     hasIgnore,
     conflicts,
+    version,
   ]);
+
+  useEffect(() => {
+    if (enabled && resolveTarget(target) !== subscribed.current) retarget();
+  });
 }
 
 /**

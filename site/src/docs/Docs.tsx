@@ -1,5 +1,6 @@
+import { recordKeybinding } from "microkeys";
 import { useEffect, useState, type ReactNode } from "react";
-import { CodeBlock, EdgeBlur, Kbd, SoundToggle, ThemeToggle } from "../ui";
+import { Binding, CodeBlock, EdgeBlur, Kbd, KeySounds, SoundToggle, ThemeToggle } from "../ui";
 
 const MODIFIERS: [string, string][] = [
   ["Shift", ""],
@@ -32,6 +33,7 @@ const GLOBAL_OPTIONS: [string, string, string][] = [
     "console.warn",
     "Called when a binding yields to a longer sequence; false silences it",
   ],
+  ["exclusive", "false", "Take over the keyboard while subscribed"],
 ];
 
 const SECTIONS = [
@@ -40,6 +42,9 @@ const SECTIONS = [
   { id: "syntax", title: "Syntax" },
   { id: "binding-options", title: "Binding options" },
   { id: "global-options", title: "Global options" },
+  { id: "exclusive", title: "Exclusive scopes" },
+  { id: "recording", title: "Recording" },
+  { id: "react", title: "React" },
   { id: "formatting", title: "Formatting" },
   { id: "lower-level", title: "Lower-level API" },
 ] as const;
@@ -110,6 +115,46 @@ function OptionTable({ rows, head }: { rows: [string, string, string][]; head: s
   );
 }
 
+/** Records one shortcut on click and shows the binding string that matches it. */
+function Recorder() {
+  const [binding, setBinding] = useState<string | null>(null);
+  const [recording, setRecording] = useState<AbortController | null>(null);
+
+  useEffect(() => () => recording?.abort(), [recording]);
+
+  const toggle = () => {
+    if (recording) {
+      recording.abort();
+      return;
+    }
+    const controller = new AbortController();
+    setRecording(controller);
+    recordKeybinding(window, { signal: controller.signal })
+      .then(setBinding, () => {})
+      .finally(() => setRecording(null));
+  };
+
+  return (
+    <div className="recorder">
+      <span className="recorder-output" aria-live="polite">
+        {recording ? (
+          "Press a shortcut…"
+        ) : binding ? (
+          <>
+            <Binding binding={binding} />
+            <code>"{binding}"</code>
+          </>
+        ) : (
+          "Record a shortcut to see its binding"
+        )}
+      </span>
+      <button className="recorder-button" onClick={toggle}>
+        {recording ? "Cancel" : "Record"}
+      </button>
+    </div>
+  );
+}
+
 const SECTION_IDS = SECTIONS.map((s) => s.id);
 
 export function Docs() {
@@ -117,6 +162,7 @@ export function Docs() {
   return (
     <div className="docs">
       <EdgeBlur />
+      <KeySounds />
       <nav className="docs-nav" aria-label="Sections">
         <a href="/" className="docs-brand">
           microkeys
@@ -209,6 +255,18 @@ const unsubscribe = microkeys(window, {
             to compile; computed strings that slip through throw a <code>SyntaxError</code> when the
             handler is created.
           </p>
+          <p>
+            Letters match the character typed, so <code>$mod+z</code> follows the Z key on AZERTY
+            and Dvorak. When the typed character isn't ASCII (Russian <code>я</code>, or{" "}
+            <code>å</code> from Option+A on macOS), the letter or digit of the physical key is used
+            instead, so <code>Control+s</code> and <code>Alt+a</code> still work. Write{" "}
+            <code>KeyZ</code> to bind the physical key.
+          </p>
+          <p>
+            On Windows, AltGr reports as Control+Alt. A character typed with AltGr (<code>@</code>{" "}
+            on a German keyboard) doesn't fire a <code>Control+Alt+KeyQ</code> binding. Bind it with{" "}
+            <code>AltGraph+KeyQ</code> or <code>Control+Alt+@</code>.
+          </p>
         </Section>
 
         <Section id="binding-options" title="Binding options">
@@ -228,10 +286,31 @@ const unsubscribe = microkeys(window, {
         <Section id="global-options" title="Global options">
           <OptionTable rows={GLOBAL_OPTIONS} head="Option" />
           <p>
-            By default <code>ignore</code> skips IME composition and events from inputs, textareas,
-            selects, and contenteditable elements, unless that element is the listener's own target.
-            To extend it:
+            A key fires at most one binding per subscription. When a key both completes a binding
+            and starts a longer sequence, the one listed first wins: an earlier sequence holds the
+            key back and calls <code>onConflict</code>, an earlier binding fires and the sequence
+            never starts. To have both, subscribe them separately.
           </p>
+          <p>
+            The default <code>ignore</code> leaves keys to the browser or the focused control when
+            they belong there:
+          </p>
+          <ul>
+            <li>During IME composition: every key.</li>
+            <li>
+              In inputs, textareas, selects, and contenteditable: typing. <code>$mod</code> and{" "}
+              <code>Control</code> combos, <code>Escape</code>, and F-keys still fire, except text
+              editing ones like <code>$mod+a</code>, <code>$mod+c</code>, and <code>$mod+z</code>.
+            </li>
+            <li>
+              On buttons, links, and checkboxes: plain <code>Enter</code> and <code>Space</code>.
+            </li>
+            <li>
+              Inside menus, listboxes, grids, and tablists: plain arrow keys, unless the listener is
+              on that widget.
+            </li>
+          </ul>
+          <p>It never ignores events whose target is the listener's own target. To extend it:</p>
           <CodeBlock
             code={`import { defaultKeybindingsHandlerIgnore } from "microkeys"
 
@@ -240,6 +319,64 @@ microkeys(window, bindings, {
     defaultKeybindingsHandlerIgnore(e) || (e.target as Element).closest("dialog") != null,
 })`}
           />
+        </Section>
+
+        <Section id="exclusive" title="Exclusive scopes">
+          <p>
+            A dialog can take over the keyboard. While an <code>exclusive</code> subscription is
+            active, every other subscription pauses, so <code>Escape</code> closes the dialog
+            without also reaching the page. Exclusive subscriptions stack: the newest wins, and the
+            previous one resumes when it unsubscribes.
+          </p>
+          <CodeBlock
+            code={`function openDialog() {
+  const close = microkeys(window, { Escape: () => close() }, { exclusive: true })
+}`}
+          />
+        </Section>
+
+        <Section id="recording" title="Recording shortcuts">
+          <Recorder />
+          <CodeBlock
+            code={`import { recordKeybinding, keybindingFromEvent } from "microkeys"
+
+const binding = await recordKeybinding() // user presses ⌘⇧K → "$mod+Shift+k"
+microkeys(window, { [binding]: run })
+
+recordKeybinding(window, { signal: controller.signal, mod: false }) // "Meta+Shift+k"
+keybindingFromEvent(event) // same conversion for your own listener`}
+          />
+          <p>
+            <code>recordKeybinding</code> waits for a non-modifier key, then{" "}
+            <code>preventDefault</code>s it. The result matches the press that produced it.
+          </p>
+        </Section>
+
+        <Section id="react" title="React">
+          <CodeBlock
+            code={`import { useKeybinding, useKeybindings } from "microkeys/react"
+
+function Editor() {
+  const ref = useRef<HTMLDivElement>(null)
+  useKeybindings({
+    "$mod+s": { handler: save, preventDefault: true },
+    "g i": goToInbox,
+  })
+  useKeybinding("Escape", close, {
+    target: ref,
+    exclusive: true,
+    enabled: isOpen,
+  })
+  return <div ref={ref} />
+}`}
+          />
+          <p>
+            Hooks take every global option, plus <code>target</code> (an element or ref, default{" "}
+            <code>window</code>) and <code>enabled</code>. Handlers, <code>when</code>,{" "}
+            <code>ignore</code>, and <code>onConflict</code> always use the latest render, so inline
+            functions don't resubscribe. Other per-binding options apply when the listener is
+            created.
+          </p>
         </Section>
 
         <Section id="formatting" title="Formatting">
@@ -253,6 +390,7 @@ microkeys(window, bindings, {
 formatKeybinding("$mod+Shift+k") // "⇧⌘K" on macOS, "Ctrl+Shift+K" elsewhere
 formatKeybinding("g i") // "G I"
 formatKeybinding("Control+Enter", { apple: true }) // "⌃↩"
+formatKeybinding("$mod+k", { apple: false }) // "Ctrl+K", even on macOS
 formatKeybinding("g i", { sequenceSeparator: " then " }) // "G then I"`}
           />
         </Section>

@@ -107,7 +107,7 @@ export function Tests() {
   useEffect(() => {
     let cancelled = false;
     setResults({});
-    (async () => {
+    void (async () => {
       for (const c of CASES) {
         const result = await runCase(c);
         if (cancelled) return;
@@ -119,19 +119,21 @@ export function Tests() {
     };
   }, [run]);
 
-  // Dogfood: the page's own shortcuts.
-  useEffect(
-    () =>
-      microkeys(window, {
-        "/": {
-          handler: () => filterRef.current?.focus(),
-          preventDefault: true,
-        },
-        r: () => setRun((n) => n + 1),
-        p: () => setPlayAll((n) => n + 1),
-      }),
-    [],
-  );
+  // Dogfood: the page's own shortcuts, paused while the live tape takes keys.
+  const liveRef = useRef(live);
+  liveRef.current = live;
+  useEffect(() => {
+    const idle = () => !liveRef.current;
+    return microkeys(window, {
+      "/": {
+        handler: () => filterRef.current?.focus(),
+        preventDefault: true,
+        when: idle,
+      },
+      r: { handler: () => setRun((n) => n + 1), when: idle },
+      p: { handler: () => setPlayAll((n) => n + 1), when: idle },
+    });
+  }, []);
 
   const visible = useMemo(() => {
     const q = filter.trim().toLowerCase();
@@ -373,7 +375,7 @@ function Strip({
   };
 
   const report = () => {
-    copy(
+    void copy(
       [
         `### ${c.title} (\`${c.id}\`)`,
         "",

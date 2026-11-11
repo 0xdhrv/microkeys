@@ -1,7 +1,10 @@
 import { ALT, ALT_GRAPH, CONTROL, IS_APPLE, META, SHIFT, parseKeybinding } from "./core";
 
 export interface FormatOptions {
-  /** Use Apple symbols (⌘⇧⌥⌃). Defaults to the current platform. */
+  /**
+   * Use Apple symbols (⌘⇧⌥⌃), and show `$mod` as ⌘ rather than Ctrl.
+   * Defaults to the current platform.
+   */
   apple?: boolean;
   /** Separator between modifiers and key. Default `""` on Apple, `"+"` elsewhere. */
   separator?: string;
@@ -74,7 +77,8 @@ export function formatKeybinding(binding: string, options: FormatOptions = {}): 
   const separator = options.separator ?? (apple ? "" : "+");
   const order = apple ? APPLE_ORDER : DEFAULT_ORDER;
 
-  return parseKeybinding(binding)
+  // `$mod` means the platform being formatted for, not the one running this.
+  return parseKeybinding(binding.replace(/\$mod(?=\]?\+)/gi, apple ? "Meta" : "Control"))
     .map((press) => {
       const parts: string[] = [];
       for (const [bit, label] of order) {

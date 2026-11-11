@@ -92,6 +92,15 @@ describe("single press", () => {
     expect(cb).toHaveBeenCalledOnce();
   });
 
+  test("regex key with + inside", () => {
+    const cb = vi.fn();
+    bind({ "(F\\d+)": cb, "Shift+([a-z]+)": cb });
+    press("F12");
+    press("q", { shiftKey: true });
+    press("q");
+    expect(cb).toHaveBeenCalledTimes(2);
+  });
+
   test("handler receives event and binding", () => {
     const cb = vi.fn();
     bind({ "Shift+a": cb });
@@ -533,6 +542,16 @@ describe("ignore", () => {
     expect(cb).toHaveBeenCalledOnce();
   });
 
+  test("a listener on the widget gets its arrow keys", () => {
+    const cb = vi.fn();
+    const tablist = $el("div", { role: "tablist" });
+    const tab = document.createElement("button");
+    tablist.appendChild(tab);
+    bind({ ArrowRight: cb }, undefined, tablist);
+    press("ArrowRight", {}, tab);
+    expect(cb).toHaveBeenCalledOnce();
+  });
+
   test("custom ignore overrides default", () => {
     const input = $el("input");
     const cb = vi.fn();
@@ -661,6 +680,12 @@ describe("formatKeybinding", () => {
     expect(formatKeybinding("Meta+Shift+k", { apple: false })).toBe("Win+Shift+K");
     expect(formatKeybinding("Ctrl+Digit1", { apple: false })).toBe("Ctrl+1");
     expect(formatKeybinding("Escape", { apple: false })).toBe("Esc");
+  });
+
+  test("$mod follows the apple option, not the current platform", () => {
+    expect(formatKeybinding("$mod+Shift+k", { apple: true })).toBe("⇧⌘K");
+    expect(formatKeybinding("$mod+Shift+k", { apple: false })).toBe("Ctrl+Shift+K");
+    expect(formatKeybinding("[$mod]+k", { apple: false })).toBe("K");
   });
 
   test("sequences and regex keys", () => {
