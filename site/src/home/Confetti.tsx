@@ -200,7 +200,7 @@ export function Confetti({
   const burst = () => {
     const b = btn.current,
       c = canvas.current;
-    if (!c) return;
+    if (!c || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     /* from the top of the button, in the block's own pixels. The button
        is mid-block, so the throw is softer than a burst from the foot
        of it: the peak stays inside the frame */
