@@ -1,7 +1,7 @@
 import { defaultKeybindingsHandlerIgnore, eventModifiers, IS_APPLE, microkeys } from "microkeys";
 import { TextMorph } from "torph/react";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { Binding, Kbd } from "../ui";
+import { Binding, ForPlatform, Kbd } from "../ui";
 import { Confetti } from "./Confetti";
 
 /** microkeys' default gap allowed between sequence presses. */
@@ -198,19 +198,37 @@ export function SequenceDemo() {
 // Live modifier visualizer
 // ---------------------------------------------------------------------------
 
-const MODS = IS_APPLE
-  ? ([
-      ["⌃", 8, "Control"],
-      ["⌥", 4, "Alt"],
-      ["⇧", 1, "Shift"],
-      ["⌘", 2, "Meta"],
-    ] as const)
-  : ([
-      ["Ctrl", 8, "Control"],
-      ["Alt", 4, "Alt"],
-      ["Shift", 1, "Shift"],
-      ["Win", 2, "Meta"],
-    ] as const);
+const APPLE_MODS = [
+  ["⌃", 8, "Control"],
+  ["⌥", 4, "Alt"],
+  ["⇧", 1, "Shift"],
+  ["⌘", 2, "Meta"],
+] as const;
+const OTHER_MODS = [
+  ["Ctrl", 8, "Control"],
+  ["Alt", 4, "Alt"],
+  ["Shift", 1, "Shift"],
+  ["Win", 2, "Meta"],
+] as const;
+const MODS = IS_APPLE ? APPLE_MODS : OTHER_MODS;
+
+function ModifierKeys({
+  mods,
+  held,
+}: {
+  mods: typeof APPLE_MODS | typeof OTHER_MODS;
+  held: number;
+}) {
+  return (
+    <div className="kbd-row">
+      {mods.map(([label, bit]) => (
+        <Kbd key={label} size="lg" active={(held & bit) !== 0}>
+          {label}
+        </Kbd>
+      ))}
+    </div>
+  );
+}
 
 const MODIFIER_KEYS = new Set(["Shift", "Meta", "Alt", "Control", "AltGraph", "CapsLock"]);
 
@@ -244,13 +262,10 @@ export function ModifiersDemo() {
   return (
     <div className="demo">
       <div className="mods">
-        <div className="kbd-row">
-          {MODS.map(([label, bit]) => (
-            <Kbd key={label} size="lg" active={(mods & bit) !== 0}>
-              {label}
-            </Kbd>
-          ))}
-        </div>
+        <ForPlatform
+          apple={<ModifierKeys mods={APPLE_MODS} held={mods} />}
+          other={<ModifierKeys mods={OTHER_MODS} held={mods} />}
+        />
         {key || mods ? (
           <code className="mods-binding">
             <TextMorph duration={160}>{binding}</TextMorph>

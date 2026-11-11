@@ -50,6 +50,21 @@ export function Kbd({
   );
 }
 
+/**
+ * Shows `apple` on Apple devices and `other` elsewhere. The prerender can't
+ * know the visitor's platform, so it emits both and the head script's
+ * `data-apple` picks one before first paint.
+ */
+export function ForPlatform({ apple, other }: { apple: ReactNode; other: ReactNode }) {
+  if (typeof document !== "undefined") return IS_APPLE ? apple : other;
+  return (
+    <>
+      <span data-platform="apple">{apple}</span>
+      <span data-platform="other">{other}</span>
+    </>
+  );
+}
+
 /** Renders a keybinding as keycaps, e.g. `$mod+k` → [⌘][K]. */
 export function Binding({
   binding,
@@ -60,6 +75,14 @@ export function Binding({
   apple?: boolean;
   size?: "lg";
 }) {
+  if (apple === undefined) {
+    return (
+      <ForPlatform
+        apple={<Binding binding={binding} apple size={size} />}
+        other={<Binding binding={binding} apple={false} size={size} />}
+      />
+    );
+  }
   return (
     <span className="kbd-row">
       {keycaps(binding, apple).map((press, i) => (

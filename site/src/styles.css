@@ -158,6 +158,15 @@ kbd {
   font-family: var(--mono);
 }
 
+[data-platform] {
+  display: contents;
+}
+
+:root[data-apple] [data-platform="other"],
+:root:not([data-apple]) [data-platform="apple"] {
+  display: none;
+}
+
 /* ---------------------------------------------------------------- kbd */
 
 .kbd {
