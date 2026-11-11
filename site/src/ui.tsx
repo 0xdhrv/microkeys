@@ -17,7 +17,8 @@ export function withTransition(update: () => void) {
     update();
     return;
   }
-  document.startViewTransition(() => flushSync(update));
+  // A newer transition skips this one, which rejects `ready`; the update still applies.
+  document.startViewTransition(() => flushSync(update)).ready.catch(() => {});
 }
 
 /** Splits a keybinding into keycap labels, grouped by sequence press. */
