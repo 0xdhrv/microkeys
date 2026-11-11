@@ -673,6 +673,12 @@ describe("formatKeybinding", () => {
     expect(formatKeybinding("Escape", { apple: false })).toBe("Esc");
   });
 
+  test("$mod follows the apple option, not the current platform", () => {
+    expect(formatKeybinding("$mod+Shift+k", { apple: true })).toBe("⇧⌘K");
+    expect(formatKeybinding("$mod+Shift+k", { apple: false })).toBe("Ctrl+Shift+K");
+    expect(formatKeybinding("[$mod]+k", { apple: false })).toBe("K");
+  });
+
   test("sequences and regex keys", () => {
     expect(formatKeybinding("g i", { apple: false })).toBe("G I");
     expect(formatKeybinding("Shift+(F[1-9])", { apple: false })).toBe("Shift+(F[1-9])");
