@@ -125,6 +125,20 @@ function openDialog() {
 }
 ```
 
+## Recording shortcuts
+
+```ts
+import { recordKeybinding, keybindingFromEvent } from "microkeys";
+
+const binding = await recordKeybinding(); // user presses ⌘⇧K → "$mod+Shift+k"
+microkeys(window, { [binding]: run });
+
+recordKeybinding(window, { signal: controller.signal, mod: false }); // "Meta+Shift+k"
+keybindingFromEvent(event); // same conversion for your own listener
+```
+
+`recordKeybinding` waits for a non-modifier key, then `preventDefault`s it. The result matches the press that produced it.
+
 ## React
 
 ```tsx

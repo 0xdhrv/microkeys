@@ -1,5 +1,6 @@
+import { recordKeybinding } from "microkeys";
 import { useEffect, useState, type ReactNode } from "react";
-import { CodeBlock, EdgeBlur, Kbd, SoundToggle, ThemeToggle } from "../ui";
+import { Binding, CodeBlock, EdgeBlur, Kbd, SoundToggle, ThemeToggle } from "../ui";
 
 const MODIFIERS: [string, string][] = [
   ["Shift", ""],
@@ -42,6 +43,7 @@ const SECTIONS = [
   { id: "binding-options", title: "Binding options" },
   { id: "global-options", title: "Global options" },
   { id: "exclusive", title: "Exclusive scopes" },
+  { id: "recording", title: "Recording" },
   { id: "react", title: "React" },
   { id: "formatting", title: "Formatting" },
   { id: "lower-level", title: "Lower-level API" },
@@ -110,6 +112,46 @@ function OptionTable({ rows, head }: { rows: [string, string, string][]; head: s
         ))}
       </tbody>
     </table>
+  );
+}
+
+/** Records one shortcut on click and shows the binding string that matches it. */
+function Recorder() {
+  const [binding, setBinding] = useState<string | null>(null);
+  const [recording, setRecording] = useState<AbortController | null>(null);
+
+  useEffect(() => () => recording?.abort(), [recording]);
+
+  const toggle = () => {
+    if (recording) {
+      recording.abort();
+      return;
+    }
+    const controller = new AbortController();
+    setRecording(controller);
+    recordKeybinding(window, { signal: controller.signal })
+      .then(setBinding, () => {})
+      .finally(() => setRecording(null));
+  };
+
+  return (
+    <div className="recorder">
+      <span className="recorder-output" aria-live="polite">
+        {recording ? (
+          "Press a shortcut…"
+        ) : binding ? (
+          <>
+            <Binding binding={binding} />
+            <code>"{binding}"</code>
+          </>
+        ) : (
+          "Record a shortcut to see its binding"
+        )}
+      </span>
+      <button className="recorder-button" onClick={toggle}>
+        {recording ? "Cancel" : "Record"}
+      </button>
+    </div>
   );
 }
 
@@ -281,6 +323,23 @@ microkeys(window, bindings, {
   const close = microkeys(window, { Escape: () => close() }, { exclusive: true })
 }`}
           />
+        </Section>
+
+        <Section id="recording" title="Recording shortcuts">
+          <Recorder />
+          <CodeBlock
+            code={`import { recordKeybinding, keybindingFromEvent } from "microkeys"
+
+const binding = await recordKeybinding() // user presses ⌘⇧K → "$mod+Shift+k"
+microkeys(window, { [binding]: run })
+
+recordKeybinding(window, { signal: controller.signal, mod: false }) // "Meta+Shift+k"
+keybindingFromEvent(event) // same conversion for your own listener`}
+          />
+          <p>
+            <code>recordKeybinding</code> waits for a non-modifier key, then{" "}
+            <code>preventDefault</code>s it. The result matches the press that produced it.
+          </p>
         </Section>
 
         <Section id="react" title="React">
