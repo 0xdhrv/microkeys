@@ -125,6 +125,28 @@ function openDialog() {
 }
 ```
 
+## React
+
+```tsx
+import { useKeybinding, useKeybindings } from "microkeys/react";
+
+function Editor() {
+  const ref = useRef<HTMLDivElement>(null);
+  useKeybindings({
+    "$mod+s": { handler: save, preventDefault: true },
+    "g i": goToInbox,
+  });
+  useKeybinding("Escape", close, {
+    target: ref,
+    exclusive: true,
+    enabled: isOpen,
+  });
+  return <div ref={ref} />;
+}
+```
+
+Hooks take every global option, plus `target` (an element or ref, default `window`) and `enabled`. Handlers, `when`, `ignore`, and `onConflict` always use the latest render, so inline functions don't resubscribe. Other per-binding options apply when the listener is created.
+
 ## Formatting
 
 `formatKeybinding` turns a binding into display text, with Apple symbols on macOS and iOS.

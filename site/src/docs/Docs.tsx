@@ -42,6 +42,7 @@ const SECTIONS = [
   { id: "binding-options", title: "Binding options" },
   { id: "global-options", title: "Global options" },
   { id: "exclusive", title: "Exclusive scopes" },
+  { id: "react", title: "React" },
   { id: "formatting", title: "Formatting" },
   { id: "lower-level", title: "Lower-level API" },
 ] as const;
@@ -280,6 +281,33 @@ microkeys(window, bindings, {
   const close = microkeys(window, { Escape: () => close() }, { exclusive: true })
 }`}
           />
+        </Section>
+
+        <Section id="react" title="React">
+          <CodeBlock
+            code={`import { useKeybinding, useKeybindings } from "microkeys/react"
+
+function Editor() {
+  const ref = useRef<HTMLDivElement>(null)
+  useKeybindings({
+    "$mod+s": { handler: save, preventDefault: true },
+    "g i": goToInbox,
+  })
+  useKeybinding("Escape", close, {
+    target: ref,
+    exclusive: true,
+    enabled: isOpen,
+  })
+  return <div ref={ref} />
+}`}
+          />
+          <p>
+            Hooks take every global option, plus <code>target</code> (an element or ref, default{" "}
+            <code>window</code>) and <code>enabled</code>. Handlers, <code>when</code>,{" "}
+            <code>ignore</code>, and <code>onConflict</code> always use the latest render, so inline
+            functions don't resubscribe. Other per-binding options apply when the listener is
+            created.
+          </p>
         </Section>
 
         <Section id="formatting" title="Formatting">
