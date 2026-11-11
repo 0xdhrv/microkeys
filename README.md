@@ -220,19 +220,20 @@ Also exported: `parseKeybinding`, `matchKeybindingPress`, `eventModifiers`,
 ## Development
 
 ```sh
-npm test          # runtime tests (happy-dom) + type tests
-npm run typecheck
-npm run build     # tsdown → dist/ (ESM + CJS + .d.ts)
-npm run bench     # dispatch benchmark
+pnpm install      # the library and the site/ workspace
+pnpm test         # runtime tests (happy-dom) + type tests
+pnpm typecheck
+pnpm build        # tsdown → dist/ (ESM + CJS + .d.ts)
+pnpm bench        # dispatch benchmark
+pnpm check        # format, lint, tests, and build, as CI runs them
 ```
 
 The demo site lives in `site/` (Vite+ and React). It imports the library from
 `src/` directly, so changes show up live:
 
 ```sh
-npm --prefix site install
-npm run site:dev    # / demo, /tests/ in-browser test cases, /docs/ reference
-npm run site:build  # static output in site/dist
+pnpm site:dev    # / demo, /tests/ in-browser test cases, /docs/ reference
+pnpm site:build  # static output in site/dist
 ```
 
 Test cases are defined in `site/src/tests/cases.ts`.
