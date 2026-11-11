@@ -168,6 +168,10 @@ overrides:
 importers:
 
   .:
+    dependencies:
+      react:
+        specifier: '>=18'
+        version: 19.3.1
     devDependencies:
       happy-dom:
         specifier: ^21.0.3
