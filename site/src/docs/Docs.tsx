@@ -389,6 +389,7 @@ function Editor() {
 formatKeybinding("$mod+Shift+k") // "⇧⌘K" on macOS, "Ctrl+Shift+K" elsewhere
 formatKeybinding("g i") // "G I"
 formatKeybinding("Control+Enter", { apple: true }) // "⌃↩"
+formatKeybinding("$mod+k", { apple: false }) // "Ctrl+K", even on macOS
 formatKeybinding("g i", { sequenceSeparator: " then " }) // "G then I"`}
           />
         </Section>
