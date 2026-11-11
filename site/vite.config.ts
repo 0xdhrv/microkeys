@@ -16,6 +16,7 @@ export default defineConfig({
         home: r("index.html"),
         docs: r("docs/index.html"),
         tests: r("tests/index.html"),
+        notFound: r("404.html"),
       },
     },
   },
