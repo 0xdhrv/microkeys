@@ -107,7 +107,7 @@ export function Tests() {
   useEffect(() => {
     let cancelled = false;
     setResults({});
-    (async () => {
+    void (async () => {
       for (const c of CASES) {
         const result = await runCase(c);
         if (cancelled) return;
@@ -373,7 +373,7 @@ function Strip({
   };
 
   const report = () => {
-    copy(
+    void copy(
       [
         `### ${c.title} (\`${c.id}\`)`,
         "",
