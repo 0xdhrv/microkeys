@@ -125,7 +125,7 @@ target.
 | Anywhere, during IME composition                 | Everything                                                                                                                                                             |
 | Text inputs, textareas, selects, contenteditable | Typing. `$mod`/`Control` combos, `Escape`, and F-keys still fire, except text editing combos (`$mod+a`, `c`, `v`, `x`, `y`, `z`, arrows, Backspace, Delete, Home, End) |
 | Buttons, links, checkboxes, `role="button"`…     | Plain `Enter` and `Space`                                                                                                                                              |
-| Inside menus, listboxes, grids, tablists…        | Plain arrow keys                                                                                                                                                       |
+| Inside menus, listboxes, grids, tablists…        | Plain arrow keys, unless the listener is on that widget                                                                                                                |
 
 To extend it:
 

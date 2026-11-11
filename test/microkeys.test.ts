@@ -533,6 +533,16 @@ describe("ignore", () => {
     expect(cb).toHaveBeenCalledOnce();
   });
 
+  test("a listener on the widget gets its arrow keys", () => {
+    const cb = vi.fn();
+    const tablist = $el("div", { role: "tablist" });
+    const tab = document.createElement("button");
+    tablist.appendChild(tab);
+    bind({ ArrowRight: cb }, undefined, tablist);
+    press("ArrowRight", {}, tab);
+    expect(cb).toHaveBeenCalledOnce();
+  });
+
   test("custom ignore overrides default", () => {
     const input = $el("input");
     const cb = vi.fn();

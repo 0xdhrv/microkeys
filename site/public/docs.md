@@ -102,7 +102,7 @@ The default `ignore` leaves keys to the browser or the focused control when they
 - During IME composition: every key.
 - In inputs, textareas, selects, and contenteditable: typing. `$mod` and `Control` combos, `Escape`, and F-keys still fire, except text editing ones like `$mod+a`, `$mod+c`, and `$mod+z`.
 - On buttons, links, and checkboxes: plain `Enter` and `Space`.
-- Inside menus, listboxes, grids, and tablists: plain arrow keys.
+- Inside menus, listboxes, grids, and tablists: plain arrow keys, unless the listener is on that widget.
 
 It never ignores events whose target is the listener's own target. To extend it:
 

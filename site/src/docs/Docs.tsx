@@ -298,7 +298,10 @@ const unsubscribe = microkeys(window, {
             <li>
               On buttons, links, and checkboxes: plain <code>Enter</code> and <code>Space</code>.
             </li>
-            <li>Inside menus, listboxes, grids, and tablists: plain arrow keys.</li>
+            <li>
+              Inside menus, listboxes, grids, and tablists: plain arrow keys, unless the listener is
+              on that widget.
+            </li>
           </ul>
           <p>It never ignores events whose target is the listener's own target. To extend it:</p>
           <CodeBlock
