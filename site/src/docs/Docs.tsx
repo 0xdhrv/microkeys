@@ -210,6 +210,18 @@ const unsubscribe = microkeys(window, {
             to compile; computed strings that slip through throw a <code>SyntaxError</code> when the
             handler is created.
           </p>
+          <p>
+            Letters match the character typed, so <code>$mod+z</code> follows the Z key on AZERTY
+            and Dvorak. When the typed character isn't ASCII (Russian <code>я</code>, or{" "}
+            <code>å</code> from Option+A on macOS), the letter or digit of the physical key is used
+            instead, so <code>Control+s</code> and <code>Alt+a</code> still work. Write{" "}
+            <code>KeyZ</code> to bind the physical key.
+          </p>
+          <p>
+            On Windows, AltGr reports as Control+Alt. A character typed with AltGr (<code>@</code>{" "}
+            on a German keyboard) doesn't fire a <code>Control+Alt+KeyQ</code> binding. Bind it with{" "}
+            <code>AltGraph+KeyQ</code> or <code>Control+Alt+@</code>.
+          </p>
         </Section>
 
         <Section id="binding-options" title="Binding options">

@@ -56,6 +56,10 @@ A modifier that isn't in the binding blocks the match: `a` doesn't fire on Shift
 
 Literal bindings are type-checked. `"Hyper+k"` and `"Shift+"` fail to compile; computed strings that slip through throw a `SyntaxError` when the handler is created.
 
+Letters match the character typed, so `$mod+z` follows the Z key on AZERTY and Dvorak. When the typed character isn't ASCII (Russian `я`, or `å` from Option+A on macOS), the letter or digit of the physical key is used instead, so `Control+s` and `Alt+a` still work. Write `KeyZ` to bind the physical key.
+
+On Windows, AltGr reports as Control+Alt. A character typed with AltGr (`@` on a German keyboard) doesn't fire a `Control+Alt+KeyQ` binding. Bind it with `AltGraph+KeyQ` or `Control+Alt+@`.
+
 ## Binding options
 
 A binding's value is a handler or a config object.
