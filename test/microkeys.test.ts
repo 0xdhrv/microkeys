@@ -92,6 +92,15 @@ describe("single press", () => {
     expect(cb).toHaveBeenCalledOnce();
   });
 
+  test("regex key with + inside", () => {
+    const cb = vi.fn();
+    bind({ "(F\\d+)": cb, "Shift+([a-z]+)": cb });
+    press("F12");
+    press("q", { shiftKey: true });
+    press("q");
+    expect(cb).toHaveBeenCalledTimes(2);
+  });
+
   test("handler receives event and binding", () => {
     const cb = vi.fn();
     bind({ "Shift+a": cb });
