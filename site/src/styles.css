@@ -236,8 +236,12 @@ kbd {
 
 /* ---------------------------------------------------------------- code */
 
-.code {
+.code-block {
   position: relative;
+  min-width: 0;
+}
+
+.code {
   margin: 0;
   padding: 12px 16px;
   border-radius: var(--radius);
@@ -250,18 +254,21 @@ kbd {
   white-space: pre;
 }
 
-.code .copy {
+.code-block .copy {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 8px;
+  right: 6px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: var(--surface);
   font-family: var(--font);
   font-size: 11px;
   color: var(--text-dim);
   transition: color 120ms var(--ease-out);
 }
 
-.code .copy:hover,
-.code .copy:focus-visible {
+.code-block .copy:hover,
+.code-block .copy:focus-visible {
   color: var(--text-strong);
 }
 

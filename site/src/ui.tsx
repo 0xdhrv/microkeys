@@ -124,13 +124,15 @@ export function CodeBlock({
 }) {
   const { copied, copy } = useCopy();
   return (
-    <pre className="code">
-      {prompt && <span className="tok-p">$ </span>}
-      <code>{plain ? code : highlight(code)}</code>
+    <div className="code-block">
+      <pre className="code">
+        {prompt && <span className="tok-p">$ </span>}
+        <code>{plain ? code : highlight(code)}</code>
+      </pre>
       <button className="copy" onClick={() => copy(code)}>
         <TextMorph>{copied ? "Copied" : "Copy"}</TextMorph>
       </button>
-    </pre>
+    </div>
   );
 }
 
