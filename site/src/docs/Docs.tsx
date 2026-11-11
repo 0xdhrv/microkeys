@@ -1,6 +1,6 @@
 import { recordKeybinding } from "microkeys";
 import { useEffect, useState, type ReactNode } from "react";
-import { Binding, CodeBlock, EdgeBlur, Kbd, SoundToggle, ThemeToggle } from "../ui";
+import { Binding, CodeBlock, EdgeBlur, Kbd, KeySounds, SoundToggle, ThemeToggle } from "../ui";
 
 const MODIFIERS: [string, string][] = [
   ["Shift", ""],
@@ -162,6 +162,7 @@ export function Docs() {
   return (
     <div className="docs">
       <EdgeBlur />
+      <KeySounds />
       <nav className="docs-nav" aria-label="Sections">
         <a href="/" className="docs-brand">
           microkeys
