@@ -285,6 +285,12 @@ const unsubscribe = microkeys(window, {
         <Section id="global-options" title="Global options">
           <OptionTable rows={GLOBAL_OPTIONS} head="Option" />
           <p>
+            A key fires at most one binding per subscription. When a key both completes a binding
+            and starts a longer sequence, the one listed first wins: an earlier sequence holds the
+            key back and calls <code>onConflict</code>, an earlier binding fires and the sequence
+            never starts. To have both, subscribe them separately.
+          </p>
+          <p>
             The default <code>ignore</code> leaves keys to the browser or the focused control when
             they belong there:
           </p>

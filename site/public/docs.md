@@ -97,6 +97,8 @@ microkeys(window, {
 | onConflict      | console.warn | Called when a binding yields to a longer sequence; false silences it |
 | exclusive       | false        | Take over the keyboard while subscribed                              |
 
+A key fires at most one binding per subscription. When a key both completes a binding and starts a longer sequence, the one listed first wins: an earlier sequence holds the key back and calls `onConflict`, an earlier binding fires and the sequence never starts. To have both, subscribe them separately.
+
 The default `ignore` leaves keys to the browser or the focused control when they belong there:
 
 - During IME composition: every key.
