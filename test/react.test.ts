@@ -78,3 +78,22 @@ test("ref target", () => {
   press("a", container.querySelector("#scoped")!);
   expect(cb).toHaveBeenCalledOnce();
 });
+
+test("ref target that mounts and changes later", () => {
+  const cb = vi.fn();
+  function Late(props: { id?: string }) {
+    const ref = useRef<HTMLDivElement>(null);
+    useKeybinding("a", cb, { target: ref });
+    return props.id ? createElement("div", { ref, id: props.id, key: props.id }) : null;
+  }
+  const { container, rerender } = render(createElement(Late, {}));
+  rerender(createElement(Late, { id: "first" }));
+  press("a", container.querySelector("#first")!);
+  expect(cb).toHaveBeenCalledOnce();
+
+  const first = container.querySelector("#first")!;
+  rerender(createElement(Late, { id: "second" }));
+  press("a", first);
+  press("a", container.querySelector("#second")!);
+  expect(cb).toHaveBeenCalledTimes(2);
+});
