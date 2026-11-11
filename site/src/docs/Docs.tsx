@@ -32,6 +32,7 @@ const GLOBAL_OPTIONS: [string, string, string][] = [
     "console.warn",
     "Called when a binding yields to a longer sequence; false silences it",
   ],
+  ["exclusive", "false", "Take over the keyboard while subscribed"],
 ];
 
 const SECTIONS = [
@@ -228,10 +229,22 @@ const unsubscribe = microkeys(window, {
         <Section id="global-options" title="Global options">
           <OptionTable rows={GLOBAL_OPTIONS} head="Option" />
           <p>
-            By default <code>ignore</code> skips IME composition and events from inputs, textareas,
-            selects, and contenteditable elements, unless that element is the listener's own target.
-            To extend it:
+            The default <code>ignore</code> leaves keys to the browser or the focused control when
+            they belong there:
           </p>
+          <ul>
+            <li>During IME composition: every key.</li>
+            <li>
+              In inputs, textareas, selects, and contenteditable: typing. <code>$mod</code> and{" "}
+              <code>Control</code> combos, <code>Escape</code>, and F-keys still fire, except text
+              editing ones like <code>$mod+a</code>, <code>$mod+c</code>, and <code>$mod+z</code>.
+            </li>
+            <li>
+              On buttons, links, and checkboxes: plain <code>Enter</code> and <code>Space</code>.
+            </li>
+            <li>Inside menus, listboxes, grids, and tablists: plain arrow keys.</li>
+          </ul>
+          <p>It never ignores events whose target is the listener's own target. To extend it:</p>
           <CodeBlock
             code={`import { defaultKeybindingsHandlerIgnore } from "microkeys"
 

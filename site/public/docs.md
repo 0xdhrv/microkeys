@@ -91,8 +91,16 @@ microkeys(window, {
 | stopPropagation | false        | Default for every binding                                            |
 | ignore          | default      | Return true to skip an event                                         |
 | onConflict      | console.warn | Called when a binding yields to a longer sequence; false silences it |
+| exclusive       | false        | Take over the keyboard while subscribed                              |
 
-By default `ignore` skips IME composition and events from inputs, textareas, selects, and contenteditable elements, unless that element is the listener's own target. To extend it:
+The default `ignore` leaves keys to the browser or the focused control when they belong there:
+
+- During IME composition: every key.
+- In inputs, textareas, selects, and contenteditable: typing. `$mod` and `Control` combos, `Escape`, and F-keys still fire, except text editing ones like `$mod+a`, `$mod+c`, and `$mod+z`.
+- On buttons, links, and checkboxes: plain `Enter` and `Space`.
+- Inside menus, listboxes, grids, and tablists: plain arrow keys.
+
+It never ignores events whose target is the listener's own target. To extend it:
 
 ```ts
 import { defaultKeybindingsHandlerIgnore } from "microkeys";
