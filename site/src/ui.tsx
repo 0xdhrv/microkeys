@@ -1,4 +1,4 @@
-import { formatKeybinding, IS_APPLE } from "microkeys";
+import { formatKeybinding, IS_APPLE, microkeys } from "microkeys";
 import { TextMorph } from "torph/react";
 import {
   useCallback,
@@ -147,14 +147,42 @@ export function Tabs<T extends string>({
   onChange: (tab: T) => void;
   label: string;
 }) {
+  const list = useRef<HTMLDivElement>(null);
+  const latest = useRef({ tabs, onChange });
+  latest.current = { tabs, onChange };
+
+  // Arrow keys, Home and End move between tabs, as in the WAI-ARIA tabs pattern.
+  useEffect(() => {
+    const el = list.current;
+    if (!el) return;
+    const select = (to: (index: number, count: number) => number) => () => {
+      const { tabs, onChange } = latest.current;
+      const buttons = [...el.querySelectorAll<HTMLElement>("[role=tab]")];
+      const index = to(buttons.indexOf(document.activeElement as HTMLElement), tabs.length);
+      withTransition(() => onChange(tabs[index]!));
+      buttons[index]?.focus();
+    };
+    return microkeys(
+      el,
+      {
+        ArrowRight: select((i, n) => (i + 1) % n),
+        ArrowLeft: select((i, n) => (i - 1 + n) % n),
+        Home: select(() => 0),
+        End: select((_, n) => n - 1),
+      },
+      { preventDefault: true },
+    );
+  }, []);
+
   return (
-    <div className="tabs" role="tablist" aria-label={label}>
+    <div className="tabs" role="tablist" aria-label={label} ref={list}>
       {tabs.map((tab) => (
         <button
           key={tab}
           role="tab"
           className="tab"
           aria-selected={tab === value}
+          tabIndex={tab === value ? 0 : -1}
           onClick={() => withTransition(() => onChange(tab))}
         >
           {tab}
