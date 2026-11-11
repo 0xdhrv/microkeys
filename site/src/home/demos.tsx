@@ -85,12 +85,17 @@ export function PaletteDemo() {
             className="palette-input"
             placeholder="Type a command…"
             aria-label="Command"
+            role="combobox"
+            aria-expanded
+            aria-controls="palette-list"
+            aria-activedescendant={`palette-${index}`}
             onBlur={() => setOpen(false)}
           />
-          <ul className="palette-list" role="listbox">
+          <ul className="palette-list" id="palette-list" role="listbox" aria-label="Commands">
             {COMMANDS.map((cmd, i) => (
               <li
                 key={cmd}
+                id={`palette-${i}`}
                 role="option"
                 aria-selected={i === index}
                 className="palette-item"
