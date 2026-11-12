@@ -4,10 +4,17 @@
   "description": "A tiny, fast, type-safe keybinding library.",
   "keywords": [
     "hotkeys",
+    "key-sequences",
     "keybindings",
     "keyboard",
+    "keyboard-shortcuts",
+    "react",
+    "react-hooks",
     "shortcuts",
-    "typescript"
+    "tinykeys",
+    "type-safe",
+    "typescript",
+    "zero-dependencies"
   ],
   "homepage": "https://microkeys.dhrv.pw",
   "bugs": {
@@ -57,6 +64,7 @@
     "test": "vp test run",
     "test:watch": "vp test",
     "bench": "pnpm build && node bench/dispatch.bench.mjs",
+    "size": "pnpm build && node scripts/size.mjs",
     "check": "vp check && vp test run && vp pack",
     "prepublishOnly": "pnpm check",
     "site:dev": "pnpm --filter microkeys-site dev",
