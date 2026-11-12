@@ -117,18 +117,13 @@ describe("single press", () => {
 });
 
 describe("sequences", () => {
-  test("full sequence", () => {
-    const cb = vi.fn();
-    bind({ "y e e t": cb });
-    type("yeet");
-    expect(cb).toHaveBeenCalledOnce();
-  });
-
-  test("partial sequence", () => {
+  test("fires only on the last press", () => {
     const cb = vi.fn();
     bind({ "y e e t": cb });
     type("yee");
     expect(cb).not.toHaveBeenCalled();
+    type("t");
+    expect(cb).toHaveBeenCalledOnce();
   });
 
   test("extra whitespace is tolerated", () => {
@@ -172,18 +167,12 @@ describe("sequences", () => {
     const short = vi.fn();
     const long = vi.fn();
     const onConflict = vi.fn();
-    bind({ "g i": long, i: short }, { onConflict });
-    press("g");
-    press("i");
-    expect(long).toHaveBeenCalledOnce();
-    expect(short).not.toHaveBeenCalled();
-  });
-
-  test("conflict callback", () => {
-    const onConflict = vi.fn();
-    bind({ "a b": () => {}, a: () => {} }, { onConflict });
+    bind({ "a b": long, a: short }, { onConflict });
     press("a");
     expect(onConflict).toHaveBeenCalledWith("a", ["a b"]);
+    press("b");
+    expect(long).toHaveBeenCalledOnce();
+    expect(short).not.toHaveBeenCalled();
   });
 
   test("reset() clears pending sequences", () => {
@@ -278,18 +267,12 @@ describe("modifiers", () => {
 });
 
 describe("optional modifiers", () => {
-  test("fires without optional modifier", () => {
+  test("fires with or without the optional modifier", () => {
     const cb = vi.fn();
     bind({ "[Shift]+a": cb });
     press("a");
-    expect(cb).toHaveBeenCalledOnce();
-  });
-
-  test("fires with optional modifier", () => {
-    const cb = vi.fn();
-    bind({ "[Shift]+a": cb });
     press("a", { shiftKey: true });
-    expect(cb).toHaveBeenCalledOnce();
+    expect(cb).toHaveBeenCalledTimes(2);
   });
 
   test("optional $mod", () => {
@@ -562,7 +545,7 @@ describe("ignore", () => {
 });
 
 describe("binding config", () => {
-  test("preventDefault / stopPropagation per binding", () => {
+  test("preventDefault per binding", () => {
     bind({ a: { handler: () => {}, preventDefault: true } });
     expect(press("a").defaultPrevented).toBe(true);
     expect(press("b").defaultPrevented).toBe(false);

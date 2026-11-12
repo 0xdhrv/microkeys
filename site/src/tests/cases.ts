@@ -72,7 +72,6 @@ function typed(keys: string, last: string[] = []): Step[] {
 }
 
 export const CASES: Case[] = [
-  // ------------------------------------------------------------- keys
   {
     id: "key",
     group: "Keys",
@@ -135,7 +134,6 @@ export const CASES: Case[] = [
     steps: [{ press: p("+", "shift"), expect: ["Shift++"] }],
   },
 
-  // ------------------------------------------------------------- modifiers
   {
     id: "mods-each",
     group: "Modifiers",
@@ -235,7 +233,6 @@ export const CASES: Case[] = [
     ],
   },
 
-  // ------------------------------------------------------------- altgraph
   {
     id: "altgraph",
     group: "AltGraph",
@@ -270,7 +267,6 @@ export const CASES: Case[] = [
     steps: [{ press: p("€", "altGraph alt", { code: "KeyE" }), expect: [] }],
   },
 
-  // ------------------------------------------------------------- sequences
   {
     id: "seq",
     group: "Sequences",
@@ -370,7 +366,6 @@ export const CASES: Case[] = [
     ],
   },
 
-  // ------------------------------------------------------------- config
   {
     id: "prevent",
     group: "Binding options",
@@ -469,7 +464,6 @@ export const CASES: Case[] = [
     ],
   },
 
-  // ------------------------------------------------------------- layouts
   {
     id: "layout-non-latin",
     group: "Layouts",
@@ -498,7 +492,6 @@ export const CASES: Case[] = [
     steps: [{ press: p("a", "", { code: "KeyQ" }), expect: ["a"] }],
   },
 
-  // ------------------------------------------------------------- ignore
   {
     id: "ignore-fields",
     group: "Ignore",
@@ -551,7 +544,6 @@ export const CASES: Case[] = [
     ],
   },
 
-  // ------------------------------------------------------------- errors
   {
     id: "error-modifier",
     group: "Errors",

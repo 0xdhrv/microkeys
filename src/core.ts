@@ -1,4 +1,3 @@
-/** Platform string, preferring the modern `userAgentData` API. */
 const PLATFORM: string =
   typeof navigator === "object"
     ? ((navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData
@@ -29,7 +28,6 @@ const STRICT_MASK = SHIFT | META | ALT | CONTROL;
  */
 const ALT_GRAPH_ALIASES = IS_WINDOWS ? ALT | CONTROL : ALT;
 
-/** Lower-cased modifier spelling → bit. */
 const MODIFIER_LOOKUP: { readonly [name: string]: number } = {
   shift: SHIFT,
   meta: META,
@@ -44,7 +42,6 @@ const MODIFIER_LOOKUP: { readonly [name: string]: number } = {
   $mod: IS_APPLE ? META : CONTROL,
 };
 
-/** Returns the modifier bit for a name, or `0` if it isn't a modifier. */
 export function modifierBit(name: string): number {
   return MODIFIER_LOOKUP[name.toLowerCase()] ?? 0;
 }
@@ -65,9 +62,7 @@ export function eventModifiers(event: KeyboardEvent): number {
   return mask;
 }
 
-/**
- * A single parsed press of a keybinding sequence.
- */
+/** A single parsed press of a keybinding sequence. */
 export interface KeybindingPress {
   /** Bitmask of modifiers that must be held. */
   readonly required: number;
@@ -183,9 +178,6 @@ export function eventInfo(event: KeyboardEvent): EventInfo {
   };
 }
 
-/**
- * Tests if a normalized event matches a single press.
- */
 export function matchPress(info: EventInfo, press: KeybindingPress): boolean {
   const { key, required, optional, keyBit } = press;
 
@@ -214,7 +206,6 @@ export function matchPress(info: EventInfo, press: KeybindingPress): boolean {
     return false;
   }
 
-  // Unexpected strict modifiers change the meaning of the press.
   let allowed = required | optional | keyBit;
   if (required & ALT_GRAPH) allowed |= ALT_GRAPH_ALIASES;
   return (info.mods & STRICT_MASK & ~allowed) === 0;
