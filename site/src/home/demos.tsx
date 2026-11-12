@@ -20,10 +20,6 @@ function plainKey(e: KeyboardEvent): string | null | undefined {
   return eventModifiers(e) === 0 ? e.key.toLowerCase() : null;
 }
 
-// ---------------------------------------------------------------------------
-// Command palette: $mod+k, then arrows/enter/escape bound to the input itself
-// ---------------------------------------------------------------------------
-
 const COMMANDS = ["New file", "Open recent", "Toggle sidebar", "Settings"];
 
 export function PaletteDemo() {
@@ -122,10 +118,6 @@ export function PaletteDemo() {
   );
 }
 
-// ---------------------------------------------------------------------------
-// Sequences: g i / g s / g d
-// ---------------------------------------------------------------------------
-
 // Visitors press G, then look at the keycaps before the second key, so this
 // demo allows more than microkeys' default 1s between presses.
 const GOTO_TIMEOUT = 2000;
@@ -193,10 +185,6 @@ export function SequenceDemo() {
     </div>
   );
 }
-
-// ---------------------------------------------------------------------------
-// Live modifier visualizer
-// ---------------------------------------------------------------------------
 
 const APPLE_MODS = [
   ["⌃", 8, "Control"],
@@ -277,10 +265,6 @@ export function ModifiersDemo() {
     </div>
   );
 }
-
-// ---------------------------------------------------------------------------
-// Konami code: a 10-press sequence
-// ---------------------------------------------------------------------------
 
 const KONAMI = [
   "ArrowUp",

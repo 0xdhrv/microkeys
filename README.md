@@ -7,7 +7,7 @@
 A tiny, fast, type-safe keybinding library, inspired by
 [tinykeys](https://github.com/jamiebuilds/tinykeys).
 
-- **~2 KB gzipped**, zero dependencies, ESM + CJS
+- **~3 KB gzipped**, zero dependencies, ESM + CJS
 - **Type-checked bindings**: `"Hyper+k"` or `"Shift+"` fail to compile
 - **Fast dispatch**: bitmask modifiers, no per-event timers
 - Per-binding `preventDefault`, `stopPropagation`, `repeat`, `when`, `once`

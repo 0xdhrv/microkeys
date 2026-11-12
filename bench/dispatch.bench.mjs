@@ -1,5 +1,4 @@
 // Compares the built microkeys bundle against upstream tinykeys.
-// Run with `npm run bench` (builds first).
 import { Window } from "happy-dom";
 import { Bench } from "tinybench";
 
@@ -9,7 +8,6 @@ console.warn = () => {}; // silence tinykeys conflict warnings
 const { createKeybindingsHandler: microHandler } = await import("../dist/index.js");
 const { createKeybindingsHandler: tinyHandler } = await import("tinykeys");
 
-// 104 realistic bindings: single keys, modifiers, $mod, and sequences.
 const map = {};
 for (const k of "abcdefghijklmnopqrstuvwxyz") {
   map[k] = () => {};

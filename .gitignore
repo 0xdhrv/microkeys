@@ -3,3 +3,7 @@ dist
 coverage
 *.log
 .vitest/
+
+# Claude Code per-user settings (may contain approved commands with secrets)
+.claude/settings.local.json
+.impeccable/

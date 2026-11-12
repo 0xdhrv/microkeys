@@ -266,7 +266,6 @@ export function ThemeToggle() {
   );
 }
 
-/** Mounts the global key sounds for the page. */
 export function KeySounds() {
   useEffect(() => installKeySounds(), []);
   return null;
